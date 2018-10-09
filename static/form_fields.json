@@ -1,0 +1,510 @@
+{
+  "main": {
+    "fields": [
+      {
+        "label": "Программа страхования",
+        "values": [
+          {
+            "text": "Элит",
+            "value": "Элит"
+          },
+          {
+            "text": "Комфорт",
+            "value": "Комфорт"
+          },
+          {
+            "text": "Стандарт",
+            "value": "Стандарт"
+          }
+        ],
+        "value": null,
+        "icon": "mdi-file-document-box-multiple",
+        "type": "select",
+        "rule":"Требуется указать программу страхования"
+      },
+      {
+        "label": "Регион",
+        "values": [
+          {
+            "text": "Архангельская обл.",
+            "value": "Архангельская обл."
+          },
+          {
+            "text": "Вологодская обл.",
+            "value": "Вологодская обл."
+          },
+          {
+            "text": "Калининградская обл.",
+            "value": "Калининградская обл."
+          },
+          {
+            "text": "Республика Карелия",
+            "value": "Республика Карелия"
+          },
+          {
+            "text": "Республика Комми",
+            "value": "Республика Комми"
+          },
+          {
+            "text": "Москва",
+            "value": "Москва"
+          },
+          {
+            "text": "Мурманская обл.",
+            "value": "Мурманская обл."
+          },
+          {
+            "text": "Новгородская обл.",
+            "value": "Новгородская обл."
+          },
+          {
+            "text": "Санкт-Петербург",
+            "value": "Санкт-Петербург"
+          },
+          {
+            "text": "Ленинградская обл.",
+            "value": "Ленинградская обл."
+          }
+        ],
+        "value": null,
+        "icon": "mdi-map",
+        "type": "select",
+        "rule":"Требуется указать регион страхования"
+      },
+      {
+        "label": "Тер-рия стра-я КАСКО",
+        "values": [
+          {
+            "text": "Россия+Европа+СНГ",
+            "value": "Россия+Европа+СНГ"
+          }
+        ],
+        "value": null,
+        "icon": "mdi-map-search",
+        "type": "select",
+        "rule":"Требуется указать тер-рию страхования КАСКО"
+      },
+      {
+        "label": "Срок страхования",
+        "values": [
+          "6 месяцев",
+          "7 месяцев",
+          "8 месяцев",
+          "9 месяцев",
+          "10 месяцев и более"
+        ],
+        "value": null,
+        "icon": "mdi-timelapse",
+        "type": "select",
+        "rule":"Требуется указать срок страхования"
+      },
+      {
+        "label": "Страховая сумма",
+        "value": 0,
+        "icon": "mdi-cash-multiple",
+        "type": "money",
+        "rule":"Требуется указать страховую сумму"
+      },
+      {
+        "label": "Физ./Юр. лицо",
+        "values": [
+          "Физическое лицо",
+          "Юридическое лицо"
+        ],
+        "value": null,
+        "icon": "mdi-account-card-details",
+        "type": "select",
+        "rule":"Требуется указать статус страховщика"
+      },
+      {
+        "label": "Неагрегатная страховая сумма",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Только ущерб",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      }
+    ],
+    "title": "Основная информация"
+  },
+  "bonus": {
+    "fields": [
+      {
+        "label": "КАСКО",
+        "value": 0,
+        "icon": "mdi-file-document-box-multiple",
+        "type": "number",
+        "rule":"Требуется указать Бонус-Малус на конец предыдущ. срока страхования по КАСКО"
+      },
+      {
+        "label": "АГО",
+        "value": 0,
+        "icon": "mdi-file-document-box-multiple",
+        "type": "number",
+        "rule":"Требуется указать Бонус-Малус на конец предыдущ. срока страхования по АГО"
+      }
+    ],
+    "title": "Бонус-Малус на конец предыдущ. срока страхования"
+  },
+  "payments": {
+    "fields": [
+      {
+        "label": "КАСКО",
+        "value": 0,
+        "icon": "mdi-file-document-box-multiple",
+        "type": "number",
+        "rule":"Требуется указать кол-во выплат на конец срока действия полиса по КАСКО"
+      },
+      {
+        "label": "АГО",
+        "value": 0,
+        "icon": "mdi-file-document-box-multiple",
+        "type": "number",
+        "rule":"Требуется указать кол-во выплат на конец срока действия полиса по АГО"
+      },
+      {
+        "label": "Выплата одна и составляет менее 50% страховой премии",
+        "value": false,
+        "type": "check"
+      }
+    ],
+    "title": "Кол-во выплат на конец срока действия полиса"
+  },
+  "ts": {
+    "title": "Транспортное средство",
+    "fields": [
+      {
+        "label": "Марка ТС",
+        "values": [
+          {
+            "text": "Какая-то марка 1",
+            "value": 0
+          },
+          {
+            "text": "Какая-то марка 2",
+            "value": 1
+          }
+        ],
+        "value": null,
+        "icon": "mdi-car-connected",
+        "type": "select",
+        "rule":"Требуется указать марку ТС"
+      },
+      {
+        "label": "Модель ТС",
+        "values": [
+          {
+            "text": "Какая-то модель 1",
+            "value": 0
+          },
+          {
+            "text": "Какая-то модель 2",
+            "value": 1
+          }
+        ],
+        "value": null,
+        "icon": "mdi-car-sports",
+        "type": "select",
+        "rule":"Требуется указать модель ТС"
+      },
+      {
+        "label": "Год выпуска",
+        "default-value": null,
+        "icon": "mdi-calendar",
+        "type": "data",
+        "rule":"Требуется указать год выпуска ТС"
+      },
+      {
+        "label": "Противоугонное устр-во",
+        "values": [
+          {
+            "text": "Противоугонне устр. 1",
+            "value": 0
+          },
+          {
+            "text": "Противоугонне устр. 2",
+            "value": 1
+          }
+        ],
+        "value": null,
+        "icon": "mdi-lock",
+        "type": "select"
+      },
+      {
+        "label": "Количество страхуемых ТС в парке",
+        "values": [
+          {
+            "text": "от 5 до 20",
+            "value": 0
+          },
+          {
+            "text": "от 20 до 100",
+            "value": 1
+          },
+          {
+            "text": "более 100",
+            "value": 2
+          }
+        ],
+        "value": null,
+        "icon": "mdi-parking",
+        "type": "select"
+      },
+      {
+        "label": "Комплектация",
+        "value": null,
+        "icon": "mdi-car-limousine",
+        "type": "text"
+      }
+    ]
+  },
+  "ts_check": {
+    "title": "",
+    "fields": [
+      {
+        "label": "Наличие GSM-маячка",
+        "value": false,
+        "icon": "mdi-network",
+        "type": "check"
+      },
+      {
+        "label": "Автозапуск/ Start-stop",
+        "value": false,
+        "icon": "mdi-wifi",
+        "type": "check"
+      },
+      {
+        "label": "Залоговое ТС Сбербанк",
+        "value": false,
+        "icon": "mdi-bank",
+        "type": "check"
+      },
+      {
+        "label": "Залоговое ТС иной банк",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Дополнительное оборудование",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+
+      },
+      {
+        "label": "Количество лет экспл-ции доп. оборудования",
+        "values": [
+          {
+            "text": "0",
+            "value": 0
+          },
+          {
+            "text": "1",
+            "value": 1
+          },
+          {
+            "text": "2",
+            "value": 2
+          }
+        ],
+        "value": null,
+        "icon": "mdi-settings",
+        "type": "select",
+        "rule":"Требуется указать кол-во лет экспл. доп. обрудования"
+      },
+      {
+        "label": "Стоимость доп.оборудования",
+        "value": 0,
+        "icon": "mdi-cash",
+        "type": "money",
+        "rule":"Требуется указать стоимость доп. обрудования"
+      }
+    ]
+  },
+  "drivers": {
+    "title": "",
+    "fields": [
+      {
+        "label": "Неограниченный круг водителей",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Кроме молодых водителей",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Наличие действующиего полиса ДМС",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Страх премия по ДМС более 1млн (для юр.лиц)",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Наличие действующиего полиса НС",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Наличие действующиего полиса Travel",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Программа АВТО Мама",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Сторудник САО 'Медэкспресс'",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      },
+      {
+        "label": "Клиент САО 'Медэкспресс' по другим видам",
+        "value": false,
+        "icon": "mdi-bank-transfer",
+        "type": "check"
+      }
+    ],
+    "table_items": [
+      {
+        "value": false,
+        "start": "Водитель 1",
+        "age": 0,
+        "exp": 0
+      }
+    ]
+  },
+  "dop_info": {
+    "title": "Дополнительно:АГО",
+    "fields": [
+      {
+        "label": "Страховая сумма ДАГО",
+        "values": [
+          {
+            "text": "500 000",
+            "value": 500000
+          },
+          {
+            "text": "1 000 000",
+            "value": 1000000
+          },
+          {
+            "text": "1 500 000",
+            "value": 1500000
+          },
+          {
+            "text": "2 000 000",
+            "value": 2000000
+          }
+        ],
+        "value": null,
+        "icon": "mdi-cash",
+        "type": "select",
+        "rule":"Требуется указать сумму страхования"
+      },
+      {
+        "label": "Срок страхования",
+        "values": [
+          "6 месяцев",
+          "7 месяцев",
+          "8 месяцев",
+          "9 месяцев",
+          "10 месяцев и более"
+        ],
+        "value": null,
+        "icon": "mdi-timelapse",
+        "type": "select",
+        "rule":"Требуется указать период страхования"
+      },
+      {
+        "label": "Сумма премии за АГО",
+        "value": 0,
+        "icon": "mdi-bank",
+        "type": "money",
+        "rule":"Требуется указать сумму премии"
+      }
+    ]
+  },
+  "dop_info_ns": {
+    "title": "Дополнительно:НС",
+    "fields": [
+      {
+        "label": "Страхование от НС вследствие ДТП",
+        "values": [
+          {
+            "text": "300 000",
+            "value": 300000
+          },
+          {
+            "text": "500 000",
+            "value": 500000
+          }
+        ],
+        "value": null,
+        "icon": "mdi-cash",
+        "type": "select",
+        "rule":"Требуется указать сумму страхования"
+      },
+      {
+        "label": "Сумма премии за НС",
+        "value": 0,
+        "icon": "mdi-bank",
+        "type": "money",
+        "rule":"Требуется указать сумму премии"
+      }
+    ]
+  },
+  "prolong": {
+      "fields":[{
+        "label": "Пролонгация КАСКО",
+        "value": false,
+        "type": "check"
+        },
+        {
+          "label": "Пролонгация АГО",
+          "value": false,
+          "type": "check"
+        }
+      ]
+    },
+  "insur":{
+    "label":"Страхователь",
+    "values":[
+      {
+        "text":"Страхователь 1",
+        "value":"Страхователь 1"
+      },
+      {
+        "text":"Страхователь 2",
+        "value":"Страхователь 2"
+      },
+      {
+        "text":"Страхователь 3",
+        "value":"Страхователь 3"
+      }
+    ],
+    "default-value":null,
+    "icon":"mdi-account",
+    "type":"select",
+    "rule":"[v=>!!v|| 'Req']"
+  }
+}
