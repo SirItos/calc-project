@@ -2,7 +2,7 @@
     <v-container  class="as-height">
         <v-layout  row wrap >
             <v-flex md6 sm6 class="pa-5">
-                <v-card hover   to="/calculator/new" ripple>
+                <v-card hover   to="/calculator/new" ripple style="height:100%">
                     <v-img
                         src="../../static/calculation-flat.jpg"
                         aspect-ratio="1.6"

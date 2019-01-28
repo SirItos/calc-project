@@ -1,5 +1,6 @@
 // Store for SPA
 // import libs
+
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
@@ -21,7 +22,9 @@ const vuexLocalSUser = new VuexPersistence({
         user: state.user,
 
     }),
-     filter: (mutation) =>(mutation.type === "user/setAuth"),
+     filter: (mutation) =>(mutation.type === "user/setAuth" ||
+                          mutation.type === "user/setToken" ||
+                          mutation.type === "user/setUserData"),
      modules:['user']
 })
 //Calculation_local_info
@@ -36,7 +39,8 @@ const vuexLocalCalculations = new VuexPersistence({
                            mutation.type === "calculations/edtiInsuranse" ||
                            mutation.type === "calculations/addDriver" ||
                            mutation.type === "calculations/setFieldValue" ||
-                           mutation.type === "calculations/setDireverField"
+                           mutation.type === "calculations/setDireverField" ||
+                           mutation.type === "calculations/clearCalculations"
      ),
     modules:['calculations']
 })

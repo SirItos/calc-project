@@ -36,6 +36,9 @@ const actions ={
     async sendCalculation(context,payload){
 
     },
+    async clear(context){
+         context.commit('clearCalculations');
+    }
 }
 
 
@@ -67,6 +70,9 @@ const mutations  = {
     },
     deleteDriver(state,data){
         state.calculations_progress[data.index].fields.drivers.table_items.splice(data.driver_index,1);
+    },
+    clearCalculations(state){
+        state.calculations_progress=[];
     }
 
 

@@ -1,5 +1,7 @@
 <template>
   <v-app >
+    <!--Боковая панель-->
+      <v-slide-x-transition >
     <v-navigation-drawer
       permanent
       :mini-variant="miniVariant"
@@ -7,6 +9,7 @@
       fixed
       dark
       app
+      v-if="this.is_auth"
     >
       <v-list class="pt-0 pb-0">
 
@@ -178,21 +181,37 @@
         </v-list>
       </v-list>
     </v-navigation-drawer>
+      </v-slide-x-transition>
+
+    <!--Верзняя панель-->
+      <v-slide-y-transition >
     <v-toolbar
             absolute
       scroll-off-screen
       app
       style="background-color: transparent;"
       flat
+      v-if="this.is_auth"
     >
       <v-toolbar-title class="text-uppercase">
         {{title}}
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon to="/" flat active-class="as-hidden" >
-        <v-icon >mdi-home</v-icon>
+      <v-fade-transition>
+        <div class="d-inline-flex align-center" v-if="userData!={}">
+          <v-icon color="black"   key="user_icon" >mdi-account</v-icon>
+          <span class="mr-4 ml-2 text-uppercase " key="user_name" >
+            {{userData.name}}
+          </span>
+        </div>
+      </v-fade-transition>
+      <v-btn icon flat @click="logout_confirm=true">
+        <v-icon class="trf">mdi-logout</v-icon>
       </v-btn>
     </v-toolbar>
+      </v-slide-y-transition>
+
+    <!--Контент-->
     <v-content>
 
       <v-scroll-y-reverse-transition mode="out-in">
@@ -219,26 +238,68 @@
       </v-btn>
       </v-scale-transition>
     </v-content>
+
+    <!--Футтер-->
     <v-footer  inset color="transparent" app>
       <div class="d-block pr-4" style=" width:100%; text-align: right" >
        Коник Никита&copy; 2018
       </div>
+      <!--<v-btn @click="test_api()">TEST</v-btn>-->
     </v-footer>
+
+    <!--Форма подтверждения выхода-->
+    <v-dialog
+            v-model="logout_confirm"
+            max-width="300"
+    >
+      <v-card>
+        <v-card-title class="headline">Выход</v-card-title>
+
+        <v-card-text class="subheading">
+          Вы уверены что хотите выйти?
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+                  color="grey darken-1"
+                  flat="flat"
+                  @click="logout_confirm = false"
+          >
+            Отмета
+          </v-btn>
+
+          <v-btn
+                  color="info"
+                  flat="flat"
+                  @click="()=>{this.logout_confirm = false; this.logout()}"
+          >
+            Да
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
 <script>
-  import {mapMutations} from 'vuex'
+  import {mapMutations,mapActions,mapGetters} from 'vuex'
 export default {
   data () {
     return {
       miniVariant: true,
       title: 'Рассчеты',
-        offsetY:0
+        offsetY:0,
+        logout_confirm:false
     }
   },
   name: 'App',
     computed:{
+        ...mapGetters({
+            is_auth:'user/isAuth',
+            userData:'user/getUserData'
+        }),
         rotate_cehvron(){
             return (this.miniVariant)?'rotate-right':'rotate-left';
         },
@@ -255,11 +316,35 @@ export default {
       this.$root.$on('change_title',function(title){
           self.title=(title)||self.title;
       })
+
+    },
+    destroyed(){
+      this.$root.$off('change_title');
+      this.$root.$off('login_form');
+
     },
     methods:{
+        ...mapActions({
+            action:'user/login',
+            sign_out:'user/logout',
+            clean:'calculations/clear'
+        }),
         onScroll(e){
             this.offsetY=window.pageYOffset;
+        },
+        logout(){
+            this.sign_out();
+            this.$router.push('/login');
+            this.clean();
         }
+        // test_api(){
+        //     let obj={
+        //         'login':'admin',
+        //         'password':'admin',
+        //         'app_name':'CalcClient'
+        //     }
+        //     this.action(obj);
+        // }
 
     }
 }
@@ -302,5 +387,12 @@ export default {
   }
   .as-hidden{
     display: none;
+  }
+  .trf{
+    -webkit-transform: translateX(3px);
+    -moz-transform: translateX(3px);
+    -ms-transform: translateX(3px);
+    -o-transform: translateX(3px);
+    transform: translateX(3px);
   }
 </style>
