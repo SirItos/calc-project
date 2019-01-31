@@ -7,6 +7,8 @@ import regions from '@/components/regions'
 import counter from '@/components/counter'
 import history from '@/components/history'
 import object from '@/components/history_object'
+import directory from '@/components/directory'
+import directory_test from '@/components/directory_test'
 import store from '../store'
 
 Vue.use(Router)
@@ -49,36 +51,49 @@ export default new Router({
           props:true
       },
       {
-          path: '/car',
-          name: 'ts',
-          beforeEnter:ifAuth,
-          component: ts
-      },
-      {
-          path: '/regions',
-          name: 'regions',
-          beforeEnter:ifAuth,
-          component: regions
-      },
-      {
-          path: '/counter',
-          name: 'counter',
-          beforeEnter:ifAuth,
-          component: counter
-      },
-      {
           path: '/history',
           name: 'history',
           beforeEnter:ifAuth,
           component: history,
       },
-              {
-                  path: '/object/:id',
-                  name: 'object',
-                  beforeEnter:ifAuth,
-                  component: object,
-                  props: true
-              }
+       {
+          path: '/object/:id',
+          name: 'object',
+          beforeEnter:ifAuth,
+          component: object,
+          props: true
+      },
+      {
+          path: '/directory',
+          name: 'directory',
+          beforeEnter:ifAuth,
+          component:directory
+      },
+      {
+          path: '/directory_test',
+          name: 'directory_test',
+          beforeEnter:ifAuth,
+          component:directory_test
+      }
+  //    пока не используемые пути
+  //     {
+  //         path: '/car',
+  //         name: 'ts',
+  //         beforeEnter:ifAuth,
+  //         component: ts
+  //     },
+  //     {
+  //         path: '/regions',
+  //         name: 'regions',
+  //         beforeEnter:ifAuth,
+  //         component: regions
+  //     },
+  //     {
+  //         path: '/counter',
+  //         name: 'counter',
+  //         beforeEnter:ifAuth,
+  //         component: counter
+  //     },
 
 
   ]

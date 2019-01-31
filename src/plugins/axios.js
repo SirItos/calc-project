@@ -1,9 +1,19 @@
 import axios from 'axios'
+import store from '../store'
 
-export const HTTP = axios.create({
+
+const HTTP = axios.create({
     baseURL: 'http://lavarel.loc/'
 })
 
-export default ({ Vue }) => {
-    Vue.prototype.$axios = axios
-}
+HTTP.interceptors.request.use(
+    function(config){
+        if (store.state.user.token){
+            config.headers.Authorization = 'Bearer ' + store.state.user.token;
+        }
+        return config;
+    }
+)
+
+export default HTTP
+

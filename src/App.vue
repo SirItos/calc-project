@@ -105,81 +105,102 @@
           </v-list-tile>
           <span>Готовые рассчеты</span>
         </v-tooltip>
+        <v-tooltip right :disabled="!miniVariant"   >
+          <v-list-tile
+                  active-class="light-blue"
+
+                  slot="activator"
+                  avatar
+                  ripple
+                  to="/directory"
+          >
+            <v-list-tile-avatar>
+              <v-icon>mdi-notebook</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content class="white--text">
+
+              <v-list-tile-title>Справочники</v-list-tile-title>
+
+
+            </v-list-tile-content>
+          </v-list-tile>
+          <span>Справочная информация</span>
+        </v-tooltip>
 
       </v-list>
 
-      <v-list subheader>
-        <v-subheader>
-          Справочники
-        </v-subheader>
-        <v-divider ></v-divider>
-        <v-list class="pt-0">
-          <v-tooltip right :disabled="!miniVariant"   >
-          <v-list-tile
-                  active-class="light-blue"
-                  slot="activator"
-                  avatar
-                  ripple
-                  to="/car"
-          >
-            <v-list-tile-avatar>
-              <v-icon>mdi-car</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content class="white--text">
+      <!--<v-list subheader>-->
+        <!--<v-subheader>-->
+          <!--Справочники-->
+        <!--</v-subheader>-->
+        <!--<v-divider ></v-divider>-->
+        <!--<v-list class="pt-0">-->
+          <!--<v-tooltip right :disabled="!miniVariant"   >-->
+          <!--<v-list-tile-->
+                  <!--active-class="light-blue"-->
+                  <!--slot="activator"-->
+                  <!--avatar-->
+                  <!--ripple-->
+                  <!--to="/car"-->
+          <!--&gt;-->
+            <!--<v-list-tile-avatar>-->
+              <!--<v-icon>mdi-car</v-icon>-->
+            <!--</v-list-tile-avatar>-->
+            <!--<v-list-tile-content class="white&#45;&#45;text">-->
 
-                  <v-list-tile-title>ТС</v-list-tile-title>
-
-
-            </v-list-tile-content>
-          </v-list-tile>
-            <span>Транспортное средство</span>
-          </v-tooltip>
-          <v-divider inset></v-divider>
-          <v-tooltip right :disabled="!miniVariant"   >
-          <v-list-tile
-                  active-class="light-blue"
-                  slot="activator"
-                  avatar
-                  ripple
-                  to="/regions"
-          >
-            <v-list-tile-avatar>
-              <v-icon>mdi-map-legend</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content class="white--text">
-
-              <v-list-tile-title>Регион</v-list-tile-title>
+                  <!--<v-list-tile-title>ТС</v-list-tile-title>-->
 
 
-            </v-list-tile-content>
-          </v-list-tile>
-            <span>Регионы</span>
-          </v-tooltip>
-          <v-divider inset></v-divider>
-          <v-tooltip right :disabled="!miniVariant"   >
-          <v-list-tile
-                  active-class="light-blue"
-                  slot="activator"
-                  avatar
-                  ripple
-                  to="/counter"
-          >
-            <v-list-tile-avatar>
-              <v-icon>mdi-counter</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content class="white--text">
+            <!--</v-list-tile-content>-->
+          <!--</v-list-tile>-->
+            <!--<span>Транспортное средство</span>-->
+          <!--</v-tooltip>-->
+          <!--<v-divider inset></v-divider>-->
+          <!--<v-tooltip right :disabled="!miniVariant"   >-->
+          <!--<v-list-tile-->
+                  <!--active-class="light-blue"-->
+                  <!--slot="activator"-->
+                  <!--avatar-->
+                  <!--ripple-->
+                  <!--to="/regions"-->
+          <!--&gt;-->
+            <!--<v-list-tile-avatar>-->
+              <!--<v-icon>mdi-map-legend</v-icon>-->
+            <!--</v-list-tile-avatar>-->
+            <!--<v-list-tile-content class="white&#45;&#45;text">-->
 
-              <v-list-tile-title>Коэфиценты</v-list-tile-title>
+              <!--<v-list-tile-title>Регион</v-list-tile-title>-->
 
 
-            </v-list-tile-content>
-          </v-list-tile>
-            <span>Коэффиценты</span>
-          </v-tooltip>
-          <v-divider ></v-divider>
+            <!--</v-list-tile-content>-->
+          <!--</v-list-tile>-->
+            <!--<span>Регионы</span>-->
+          <!--</v-tooltip>-->
+          <!--<v-divider inset></v-divider>-->
+          <!--<v-tooltip right :disabled="!miniVariant"   >-->
+          <!--<v-list-tile-->
+                  <!--active-class="light-blue"-->
+                  <!--slot="activator"-->
+                  <!--avatar-->
+                  <!--ripple-->
+                  <!--to="/counter"-->
+          <!--&gt;-->
+            <!--<v-list-tile-avatar>-->
+              <!--<v-icon>mdi-counter</v-icon>-->
+            <!--</v-list-tile-avatar>-->
+            <!--<v-list-tile-content class="white&#45;&#45;text">-->
 
-        </v-list>
-      </v-list>
+              <!--<v-list-tile-title>Коэфиценты</v-list-tile-title>-->
+
+
+            <!--</v-list-tile-content>-->
+          <!--</v-list-tile>-->
+            <!--<span>Коэффиценты</span>-->
+          <!--</v-tooltip>-->
+          <!--<v-divider ></v-divider>-->
+
+        <!--</v-list>-->
+      <!--</v-list>-->
     </v-navigation-drawer>
       </v-slide-x-transition>
 
@@ -304,6 +325,7 @@ export default {
             return (this.miniVariant)?'rotate-right':'rotate-left';
         },
         active_class(){
+
            return (this.$root.$route.name === 'object')?'light-blue':'';
         },
         active_class_calc(){
@@ -334,17 +356,9 @@ export default {
         },
         logout(){
             this.sign_out();
-            this.$router.push('/login');
+            // this.$router.push('/login');
             this.clean();
         }
-        // test_api(){
-        //     let obj={
-        //         'login':'admin',
-        //         'password':'admin',
-        //         'app_name':'CalcClient'
-        //     }
-        //     this.action(obj);
-        // }
 
     }
 }

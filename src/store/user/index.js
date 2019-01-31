@@ -1,5 +1,6 @@
 // User store
-import { HTTP } from '../../plugins/axios'
+import HTTP  from '../../plugins/axios'
+import router from '../../router'
 //state
 const state ={
     user: {},
@@ -49,10 +50,11 @@ const actions ={
         })
     },
     async logout (context){
-
         context.commit('setAuth',false);
         context.commit('setToken','');
         context.commit('setUserData',{});
+        delete HTTP.defaults.headers.common[`Authorization`]
+        router.push('/login')
     }
 }
 

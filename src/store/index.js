@@ -9,6 +9,7 @@ import VuexPersistence from 'vuex-persist'
 import user from './user'
 import calculations from './calculations'
 import calculations_server from './calculations_server'
+import storedProcedure from './storedProcedureCalls'
 
 
 
@@ -51,7 +52,8 @@ const store = new Vuex.Store({
     modules:{
         calculations,
         user,
-        calculations_server
+        calculations_server,
+        storedProcedure
     },
     plugins:[
         vuexLocalSUser.plugin,
