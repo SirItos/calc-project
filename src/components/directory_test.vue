@@ -42,7 +42,7 @@
                                 @click="changeSort(header.value)"
                                 ><v-icon small>arrow_upward</v-icon>
                                 {{header.text}}</th>
-                                <th  width="60px"  >
+                                <th  width="100px"  >
                                     <v-btn fab small  flat ripple color="info"  class="data_table_btn" >
                                         <v-icon  size="2em" v-if="!loading">mdi-plus</v-icon>
                                     </v-btn>
@@ -51,11 +51,11 @@
                         </template>
                             <template slot="items" slot-scope="props">
                                <tr>
-                                   <td v-for="(cell,index) in props.item" :key="index" v-if="check(index)" class="text-md-center text-sm-center">{{cell}}</td>
-                                   <td class="text-md-center text-sm-center px-1" width="60px">
-                                       <!--<v-btn fab small  flat ripple color="info" class="data_table_btn" >-->
-                                           <!--<v-icon  >mdi-pencil</v-icon>-->
-                                       <!--</v-btn>-->
+                                   <td v-for="(cell,index) in props.item" :key="index" v-if="check(index)" class="text-md-center text-sm-center">{{(setType(props.item,index))?cell:convertToData(cell)}}</td>
+                                   <td class="text-md-center text-sm-center px-1" width="100px">
+                                       <v-btn fab small  flat ripple color="info" class="data_table_btn" >
+                                           <v-icon  >mdi-pencil</v-icon>
+                                       </v-btn>
                                        <v-btn fab small  flat ripple color="info"  class="data_table_btn"  @click="deleteItem(props.item)">
                                            <v-icon  >mdi-delete</v-icon>
                                        </v-btn>
@@ -156,7 +156,7 @@
 
             //Вспомогательные
             check(item) {
-                return (item.indexOf('ID') < 0 && item.indexOf('Record') < 0 && item.indexOf('status') < 0)
+                return (item.indexOf('ID') < 0 && item.indexOf('Record') < 0 && item.indexOf('status') < 0 && item.indexOf('type')<0)
             },
             changeSort(column) {
                 if (this.pagination.sortBy === column) {
@@ -166,6 +166,12 @@
                     this.pagination.descending = false
                 }
 
+            },
+            setType(item,index){
+                return (item.type[index] !== 'datetime')
+            },
+            convertToData(strDate){
+              return this.$moment(strDate).format('DD.MM.YYYY');
             }
         }
     }

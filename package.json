@@ -16,6 +16,7 @@
     "npm": "^6.7.0",
     "vue": "^2.5.2",
     "vue-axios": "^2.1.4",
+    "vue-moment": "^4.0.0",
     "vue-money": "^0.1.0",
     "vue-router": "^3.0.1",
     "vue-underscore": "^0.1.4",

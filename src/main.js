@@ -9,9 +9,9 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import form_field from "../static/form_fields.json"
 import underscore from "vue-underscore"
+import moment from "vue-moment"
+
 // import Vue2Storage from 'vue2-storage'
-
-
 
 
 
@@ -28,26 +28,23 @@ Vue.use(Vuetify, { theme: {
         grey:'#ddd'
 }});
 
-
-// Vue.use(Vue2Storage,{
-//     prefix: 'app_',
-//     driver: 'local',
-//     ttl: 60 * 60 * 24 * 1000
-// });
 Vue.config.productionTip = false
-Vue.use(underscore);
-// let ls = new Vue();
-// export const Local= ls.$storage;
+Vue.use(underscore)
+Vue.use(moment)
+
+// Vue.use(require('vue-moment'));
+
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   store,
+
   components: { App },
   template: '<App/>',
     data:{
       form_field:form_field,
 
-    },
+    }
 });
