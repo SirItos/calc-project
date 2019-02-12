@@ -3,6 +3,7 @@
     <v-container fill-height fluid >
     <v-scroll-y-reverse-transition mode="out-in">
         <v-layout wrap v-if="!test_val" key="buttons"  >
+
             <v-flex md3 sm6>
                  <v-card  hover >
                      <v-card-actions class="pl-3 pl-sm-3 py-3 justify-center" @click="test()">
@@ -16,6 +17,7 @@
                      </v-card-actions>
                  </v-card>
             </v-flex>
+
         </v-layout>
 
 

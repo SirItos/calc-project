@@ -49,9 +49,6 @@
 
                 const [year, month, day] = date.split('-')
                 return `${day}/${month}/${year}`
-            },
-            test(){
-                 console.log('tst');
             }
         }
     }

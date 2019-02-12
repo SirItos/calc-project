@@ -32,6 +32,7 @@
                             class="elevation-1"
                             :search="search"
                     >
+                        <!--HEADER OF TABLE-->
                         <template slot="headers" slot-scope="props">
                             <tr>
                                 <th
@@ -43,17 +44,19 @@
                                 ><v-icon small>arrow_upward</v-icon>
                                 {{header.text}}</th>
                                 <th  width="100px"  >
-                                    <v-btn fab small  flat ripple color="info"  class="data_table_btn" >
+                                    <v-btn fab small  flat ripple color="info"  class="data_table_btn"  @click="open_modal(true)">
                                         <v-icon  size="2em" v-if="!loading">mdi-plus</v-icon>
                                     </v-btn>
                                 </th>
                             </tr>
                         </template>
+
+                        <!--BODY OF TABLE-->
                             <template slot="items" slot-scope="props">
                                <tr>
                                    <td v-for="(cell,index) in props.item" :key="index" v-if="check(index)" class="text-md-center text-sm-center">{{(setType(props.item,index))?cell:convertToData(cell)}}</td>
                                    <td class="text-md-center text-sm-center px-1" width="100px">
-                                       <v-btn fab small  flat ripple color="info" class="data_table_btn" >
+                                       <v-btn fab small  flat ripple color="info" class="data_table_btn" @click="open_modal(true,true,props.item)" >
                                            <v-icon  >mdi-pencil</v-icon>
                                        </v-btn>
                                        <v-btn fab small  flat ripple color="info"  class="data_table_btn"  @click="deleteItem(props.item)">
@@ -62,6 +65,9 @@
                                    </td>
                                </tr>
                             </template>
+
+
+                        <!--NO-DATA VIEW-->
                         <template slot="no-data">
                             <div class="d-flex justify-center align-center row py-5">
                                 <v-scroll-y-transition mode="out-in">
@@ -69,6 +75,9 @@
                                 </v-scroll-y-transition>
                             </div>
                         </template>
+
+
+                        <!--SAERCH RESULT ViEW-->
                         <template slot="no-results">
                             <div class="d-flex justify-center align-center row">
                                 Поиск по запросу "{{search}}" ничего не дал.
@@ -79,20 +88,31 @@
                 </v-card>
             </v-flex>
         </v-layout>
+        <v-dialog persistent max-width="70%" scrollable  v-model="modal" >
+            <c_modal :mode="edit_modal" @dialog_close="close_modal" :field_set="prep_field_set" ></c_modal>
+        </v-dialog>
+
     </v-container>
 </template>
 
 <script>
     import {mapGetters,mapActions} from 'vuex'
+    import c_modal from './add_edit_dialog'
     export default {
         name: "directory_test",
+        components:{
+            c_modal
+        },
         data:()=>({
                 array_data:[],
                 headers:[],
                 list:[],
                 search:'',
                 pagination:{},
-                loading:true
+                loading:true,
+                modal:false,
+                edit_modal:false,
+                prep_field_set:{}
         }),
         computed:{
             ...mapGetters({
@@ -134,7 +154,6 @@
                         sortBy:this.headers[0],
                         rowsPerPage:10
                     })
-                     // this.pagination.sortBy=this.headers[0]
                      this.headers.push({text: '', value: this.headers[0], align: 'center',sortable: false})
                 }
             },
@@ -146,6 +165,32 @@
 
                 }
                 await this.deleteItemAction(payload);
+
+            },
+            open_modal(open,mode=false,fields=null){
+                this.modal=open
+                this.edit_modal=mode
+                this.prep_field_set=((fields)?this.clone(fields):this.create_set())
+
+            },
+            clone(fields){
+                return Object.assign({}, fields);
+            },
+            create_set(){
+                let result={}
+                Object.keys(this.list[0]).forEach(item => {
+                    this.$set(result,item,"")
+                })
+                this.$set(result,'type',this.list[0].type)
+                return result
+            },
+            close_modal(save=false){
+                this.modal=false;
+                if (save){
+
+                }else{
+                    this.prep_field_set={}
+                }
 
             },
 
@@ -171,8 +216,9 @@
                 return (item.type[index] !== 'datetime')
             },
             convertToData(strDate){
-              return this.$moment(strDate).format('DD.MM.YYYY');
-            }
+               return this.$moment(strDate,'YYYY-MM-DD').format('DD.MM.YYYY');
+            },
+
         }
     }
 </script>
@@ -195,6 +241,8 @@
     .data_table_btn{
         margin:6px 2px;
     }
-
+    .trs_dialog{
+        transition: .4s;
+    }
 
 </style>
