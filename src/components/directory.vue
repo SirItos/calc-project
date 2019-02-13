@@ -6,7 +6,7 @@
 
             <v-flex md3 sm6>
                  <v-card  hover >
-                     <v-card-actions class="pl-3 pl-sm-3 py-3 justify-center" @click="test()">
+                     <v-card-actions class="pl-3 pl-sm-3 py-3 justify-center" @click="test('InsurancePeriod')">
                          <span class="title">Периоды страхования</span>
                          <!--<v-spacer></v-spacer>-->
                          <!--<v-btn icon @click.prevent="()=>{isFav=!isFav}" flat  ripple color="info">-->
@@ -25,7 +25,7 @@
 
             <v-layout wrap v-if="test_val" key="grids" >
                 <v-flex md12 >
-                   <directory_test></directory_test>
+                   <directory_test :procedure="procedure_name"></directory_test>
                 </v-flex>
             </v-layout>
     </v-scroll-y-reverse-transition>
@@ -44,11 +44,13 @@
         data(){
             return{
                 isFav:false,
-                test_val:false
+                test_val:false,
+                procedure_name:''
             }
         },
         methods:{
-            test(){
+            test(prname){
+                this.procedure_name=prname
                 this.test_val=!this.test_val
             }
         },

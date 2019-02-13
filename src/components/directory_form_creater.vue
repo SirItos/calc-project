@@ -21,7 +21,6 @@
         },
         methods:{
             newVal(val){
-                console.log(val)
                 this.$set(this.data_value,this.data_header,val)
                 this.$emit('wasedit')
             }

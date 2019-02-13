@@ -5,7 +5,7 @@
             type="text"
             clearable
             v-model="val"
-            :rule="[v => !!v || ('Требуется заполнить поле')]"
+            :rules="[v => !!v || ('Требуется заполнить поле')]"
             @input="()=>{this.$emit('change_val',val)}"
     ></v-text-field>
 

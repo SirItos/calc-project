@@ -16,7 +16,7 @@
                 :value="computedDateFormatted"
                 :label="field_header"
                 prepend-icon="mdi-calendar"
-                :rule="[v => !!v || ('Требуется заполнить поле')]"
+                :rules="[v => !!v || ('Требуется заполнить поле')]"
                 readonly
                 clearable
         ></v-text-field>

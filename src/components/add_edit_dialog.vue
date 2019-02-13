@@ -1,6 +1,13 @@
 <template>
 
               <v-card ref="card_modal" class="card_trs">
+                  <div class="data-table-preloader" v-if="preload">
+                      <v-progress-circular
+                              :size="100"
+                              color="info"
+                              indeterminate
+                      ></v-progress-circular>
+                  </div>
                       <v-card-title class="headline">{{(mode)?'Добаввление':'Редактирование'}}
                       </v-card-title>
                       <v-card-text>
@@ -34,45 +41,91 @@
 
 <script>
     import field_create from './directory_form_creater'
+    import {mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
         name: "add_edit_dialog",
         props:{
             mode:{type:Boolean,default:false},
-            field_set:{type:Object,default:()=>{return {}}}
+            field_set:{type:Object,default:()=>{return {}}},
         },
         data(){
             return{
                 was_edit:false,
                 show_confirm_gr:false,
-                valid:true
+                valid:true,
+                preload:false
             }
         },
         components:{
             field_create
         },
         computed:{
+            ...mapGetters({
+                getItemStatus:'storedProcedure/getItemStatus'
+            }),
             show_confirm_cmp(){
                 return this.was_edit && this.show_confirm_gr
             }
         },
         methods:{
+            ...mapActions({
+                addItemAction: "storedProcedure/createItemAction",
+                editItemAction: "storedProcedure/editItemAction"
+            }),
+
+
             check(item) {
                 return (item.indexOf('ID') < 0 && item.indexOf('Record') < 0 && item.indexOf('status') < 0 && item.indexOf('type')<0)
             },
+
             close_modal(){
                 if (this.was_edit){
                     this.show_confirm_gr=true
                 }else{
-                    this.$emit('dialog_close',true)
+                   this.close_modal_window()
                 }
             },
+
             close_modal_window(){
                this.show_confirm_gr=false
                this.was_edit=false
+               this.valid=true;
                this.$emit('dialog_close',false)
             },
-            save_modal(){
 
+            async save_modal(){
+                if (this.$refs.fmodal.validate()) {
+                    this.preload=true;
+                    (this.mode) ? await this.edit_item() : await this.create_new_item();
+                }
+
+            },
+
+            async edit_item(){
+                await this.editItemAction({
+                    st_method:this.getMethodName(),
+                    params_arr:this.field_set
+                })
+                this.resultAddEdit('изменен.')
+            },
+
+            async create_new_item(){
+                await this.addItemAction({
+                    st_method:this.getMethodName(),
+                    params_arr:this.field_set
+                })
+                this.resultAddEdit('добавлен.')
+
+            },
+            resultAddEdit(text){
+                if(this.getItemStatus(this.field_set[this.getMethodName()+'_ID'],this.getMethodName())===200){
+                    this.preload=false
+                    this.$emit('resultHTTP',{color:'success',text:'Элемент '+this.field_set[Object.keys(this.field_set)[1]]+' '+text})
+                    this.close_modal_window()
+                }
+            },
+            getMethodName(){
+                return Object.keys(this.field_set)[0].replace('_ID',"")
             }
 
 
@@ -96,6 +149,17 @@
     .fade-enter, .fade-leave-to  {
         transform:translateY(-10px);
         opacity: 0;
+    }
+    .data-table-preloader{
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background: rgba(250, 250, 250, 0.9);
+        z-index:1000;
+
     }
 
 </style>

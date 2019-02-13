@@ -3,7 +3,7 @@ import router from '../../router'
 
 
 const state={
-    insurPeriod:{}
+    InsurancePeriod:[]
 }
 
 const getters={
@@ -12,18 +12,24 @@ const getters={
     },
     getOneRecod: state => (id,name) => {
         return state[name].find(item => item.id===id)
+    },
+    getItemStatus: state =>(id,name)=>{
+
+        return state[name].find(item =>item[name+'_ID']===id).status
     }
 }
 //getListStoredPorcedur
 
 const actions={
     async getList (context, payload){
-        await HTTP.get('api/getListStoredPorcedur').then(response=>{
+        await HTTP.post('api/getListStoredPorcedur',{
+            st_method:payload.procedure
+        }).then(response=>{
             response.data.forEach(item =>{
                 item.status=response.status
             })
             let commitData={
-                name:payload,
+                name:payload.procedure,
                 data:response.data
             }
             context.commit('setDick',commitData);
@@ -33,15 +39,38 @@ const actions={
             console.log(response)
         })
     },
+
     async deleteItemAction({commit,dispatch},payload){
-        await HTTP.post('api/deleteDataStoredPorcedur',{id:payload.id,RecordTimestamp:payload.RecordTimestamp}).then(response=>{
-              console.log(response)
-              commit('deleteItem',response.data.id)
+        await HTTP.post('api/deleteDataStoredPorcedur',{st_method:payload.st_method,params_arr:{id:payload.params_arr.id,RecordTimestamp:payload.params_arr.RecordTimestamp}}).then(response=>{
+              commit('deleteItem',{name:payload.st_method,id:payload.index})
         }).catch(e=>{
             console.log(e)
-            commit('setStatus',{name:payload.name,id:payload.id,value:e})
+            commit('setStatus',{name:payload.st_method,id:payload.id,value:e})
+        })
+    },
+
+    async createItemAction({commit,dispatch},payload){
+        let result=payload.params_arr
+        await HTTP.post('api/addDataStoredPorcedur',payload).then(response=>{
+                result['status']=response.status
+                result[payload.st_method+'_ID']=response.data[0].RESULT_VALUE
+                result['RecordTimestamp']=response.data[0].TIME_STAMP
+                commit('addItem',{name:payload.st_method,data:result})
+        }).catch(e=>{
+
+        })
+    },
+    async editItemAction({commit},payload){
+        let result = payload.params_arr
+        await HTTP.post('api/editDataStoredPorcedur',payload).then(response=>{
+                result.state=response.data[0].TIME_STAMP
+              commit('editState',{name:payload.st_method,data:result})
+        }).catch(e=>{
+            console.log(e)
         })
     }
+
+
 
 }
 
@@ -53,7 +82,21 @@ const mutations  = {
        state[commitData.name][commitData.id].status=commitData.value
     },
     deleteItem(state,commitData){
+
         state[commitData.name].splice(commitData.id,1)
+    },
+    addItem(state,commitData){
+         state[commitData.name].push(commitData.data)
+    },
+    editState(state,commitData){
+        let com_id=commitData.data[commitData.name+'_ID']
+        let state_index= state[commitData.name].indexOf(state[commitData.name].find( (item,index) => {
+            return item[commitData.name+'_ID']===com_id
+        }))
+        for (let item_key in state[commitData.name][state_index]){
+            state[commitData.name][state_index][item_key]=commitData.data[item_key]
+        }
+       
 
     }
 }
