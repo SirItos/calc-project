@@ -154,7 +154,7 @@
     import {mapGetters,mapActions,mapMutations} from 'vuex'
     import c_modal from '../add_edit_dialog'
     export default {
-        name: "filial_table",
+        name: "carjackingRiskLevel",
         components:{
             c_modal
         },
@@ -184,7 +184,7 @@
             }
         }),
         created(){
-            this.$root.$emit('change_title', 'Филиалы')
+            this.$root.$emit('change_title', 'Уровень риска')
         },
         mounted(){
             this.$nextTick(async function(){
@@ -229,7 +229,7 @@
                 this.list = (this.getDickData(this.procedure))
                 if (this.list.length===0)
                     this.getEmptyFields();
-                await this.setHeaders()
+                // await this.setHeaders()
                 this.loading = false;
 
             },

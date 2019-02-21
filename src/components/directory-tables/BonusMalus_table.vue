@@ -154,7 +154,7 @@
     import {mapGetters,mapActions,mapMutations} from 'vuex'
     import c_modal from '../add_edit_dialog'
     export default {
-        name: "filial_table",
+        name: "bonusmalus_table",
         components:{
             c_modal
         },
@@ -184,7 +184,7 @@
             }
         }),
         created(){
-            this.$root.$emit('change_title', 'Филиалы')
+            this.$root.$emit('change_title', 'Бонус-Малус')
         },
         mounted(){
             this.$nextTick(async function(){

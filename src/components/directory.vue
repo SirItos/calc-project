@@ -4,10 +4,10 @@
     <v-scroll-y-reverse-transition mode="out-in">
         <v-layout wrap v-if="!enable_grid" key="buttons"  >
 
-            <v-flex md4 sm6 class="px-2 py-2" v-for="(item,index) in dir_arr" :key="index">
-                 <v-card  hover >
-                     <v-card-actions class="pl-3 pl-sm-3 py-3 justify-center" @click="go_in(item.proced)">
-                         <span class="title">{{item.name}}</span>
+            <v-flex md4 sm6 class="px-4 py-3 " v-for="(item,index) in dir_arr" :key="index">
+                 <v-card  hover  class="fill-height">
+                     <v-card-actions class="pl-3 pl-sm-3 py-3 justify-center fill-height" @click="go_in(item.proced)">
+                         <span class="title  text-md-center">{{item.name}}</span>
                          <!--<v-spacer></v-spacer>-->
                          <!--<v-btn icon @click.prevent="()=>{isFav=!isFav}" flat  ripple color="info">-->
                              <!--<v-icon  >-->
@@ -28,6 +28,9 @@
                    <directory_test  v-if="procedure_name==='InsurancePeriod'" :procedure="procedure_name"></directory_test>
                     <InsuranceArea_table v-else-if="procedure_name==='InsuranceArea'" :procedure="procedure_name"></InsuranceArea_table>
                     <Filialtable v-else-if="procedure_name==='Filial'" :procedure="procedure_name"></Filialtable>
+                    <BonusMalus_table v-else-if="procedure_name==='BonusMalus'" :procedure="procedure_name"></BonusMalus_table>
+                    <carjackingrisklevel v-else-if="procedure_name==='CarJackingRiskLevel'" :procedure="procedure_name"></carjackingrisklevel>
+                    <FilialArea v-else-if="procedure_name==='FilialInsuranceArea'" :procedure="procedure_name"></FilialArea>
                 </v-flex>
             </v-layout>
     </v-scroll-y-reverse-transition>
@@ -42,11 +45,17 @@
     import directory_test from './directory_test'
     import InsuranceArea_table from './directory-tables/InsuranceArea_table'
     import Filialtable from './directory-tables/Filial_table'
+    import BonusMalus_table from './directory-tables/BonusMalus_table'
+    import carjackingrisklevel from './directory-tables/CarJackingRiskLevel_table'
+    import FilialArea from './directory-tables/FilialArea'
     export default {
         components: {
             directory_test,
             InsuranceArea_table,
-            Filialtable
+            Filialtable,
+            BonusMalus_table,
+            carjackingrisklevel,
+            FilialArea
         },
         name: "directory",
         data(){
@@ -66,6 +75,18 @@
                     {
                         name:`Филиалы`,
                         proced:`Filial`
+                    },
+                    {
+                        name:`Бонус-Малус`,
+                        proced:`BonusMalus`
+                    },
+                    {
+                        name:`Уровень риска`,
+                        proced:`CarJackingRiskLevel`
+                    },
+                    {
+                        name:`Территории страхования филиала`,
+                        proced:`FilialInsuranceArea`
                     },
                 ]
             }

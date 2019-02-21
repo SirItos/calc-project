@@ -89,7 +89,7 @@
         </v-layout>
 
         <v-dialog persistent max-width="70%" scrollable  v-model="modal" >
-            <c_modal :mode="edit_modal" @dialog_close="close_modal" :field_set="prep_field_set"  @resultHTTP="snack_show" :table_name="procedure"></c_modal>
+            <modal :mode="edit_modal" @dialog_close="close_modal" :field_set="prep_field_set"  @resultHTTP="snack_show" :table_name="procedure"></modal>
         </v-dialog>
         <v-dialog
                 v-model="confirm.mode"
@@ -152,11 +152,11 @@
 <script>
     // название столбцов для этой таблицы.
     import {mapGetters,mapActions,mapMutations} from 'vuex'
-    import c_modal from '../add_edit_dialog'
+    import modal from '../directory-tables/FilialAreaForm/modal'
     export default {
-        name: "filial_table",
+        name: "filial-area",
         components:{
-            c_modal
+            modal
         },
         props:{
             procedure:{type:String,default:''}
@@ -184,7 +184,7 @@
             }
         }),
         created(){
-            this.$root.$emit('change_title', 'Филиалы')
+            this.$root.$emit('change_title', 'Территории страхования филиалов')
         },
         mounted(){
             this.$nextTick(async function(){
@@ -203,7 +203,7 @@
                 if (this.list.length > 0) {
                     Object.keys(this.list[0]).forEach(item => {
                         if (self.check(item)) {
-                            set.push({text: item, value: item, align: 'center',sortable:true})
+                            set.push({text: this.prepName(item), value: item, align: 'center',sortable:true})
                         }
                     })
                     this.pagination = Object.assign({},this.pagination,{
@@ -229,25 +229,11 @@
                 this.list = (this.getDickData(this.procedure))
                 if (this.list.length===0)
                     this.getEmptyFields();
-                await this.setHeaders()
+                // await this.setHeaders()
                 this.loading = false;
 
             },
-            async setHeaders() {
-                let self = this;
-                if (this.list.length > 0) {
-                    Object.keys(this.list[0]).forEach(item => {
-                        if (self.check(item)) {
-                            this.headers.push({text: item, value: item, align: 'center',sortable:true})
-                        }
-                    })
-                    this.pagination = Object.assign({},this.pagination,{
-                        sortBy:this.headers[0].value,
-                        rowsPerPage:10
-                    })
-                    this.headers.push({text: '', value: this.headers[0], align: 'center',sortable: false})
-                }
-            },
+
             confirm_delete(item){
                 this.$set(this.confirm,'mode',true)
                 this.$set(this.confirm,'text',item[Object.keys(item)[1]])
@@ -346,6 +332,10 @@
                 }
                 return this.$moment(strDate,'YYYY-MM-DD').format('DD.MM.YYYY');
             },
+            prepName(item){
+
+                return (item.split('_')[1])||item;
+            }
         }
     }
 </script>
