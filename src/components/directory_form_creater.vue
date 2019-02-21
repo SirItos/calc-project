@@ -1,5 +1,5 @@
 <template>
-    <v-flex xs12 sm6 md4>
+    <v-flex xs12 sm12 md4>
             <text_input v-if="data_type==='nvarchar'" :field_header="data_header" :field_value="data_value[data_header]" @change_val="newVal" ></text_input>
             <date_input v-if="data_type==='datetime'" :field_header="data_header" :field_value="data_value[data_header]" @change_val="newVal"></date_input>
     </v-flex>
@@ -18,6 +18,11 @@
         components:{
             text_input,
             date_input
+        },
+        computed:{
+            comp_class(){
+                return ''
+            }
         },
         methods:{
             newVal(val){

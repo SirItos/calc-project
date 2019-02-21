@@ -3,7 +3,7 @@ import router from '../../router'
 
 
 const state={
-    InsurancePeriod:[]
+    emptyFields:{}
 }
 
 const getters={
@@ -14,8 +14,11 @@ const getters={
         return state[name].find(item => item.id===id)
     },
     getItemStatus: state =>(id,name)=>{
-
-        return state[name].find(item =>item[name+'_ID']===id).status
+        console.log( (state[name].find(item =>item[name+'_ID']===id).status)|| state[name].find(item =>item[name+'ID']===id).status)
+        return (state[name].find(item =>item[name+'_ID']===id).status)
+    },
+    getEmpty: state => name=> {
+        return state.emptyFields[name]
     }
 }
 //getListStoredPorcedur
@@ -25,6 +28,7 @@ const actions={
         await HTTP.post('api/getListStoredPorcedur',{
             st_method:payload.procedure
         }).then(response=>{
+
             response.data.forEach(item =>{
                 item.status=response.status
             })
@@ -41,6 +45,7 @@ const actions={
     },
 
     async deleteItemAction({commit,dispatch},payload){
+
         await HTTP.post('api/deleteDataStoredPorcedur',{st_method:payload.st_method,params_arr:{id:payload.params_arr.id,RecordTimestamp:payload.params_arr.RecordTimestamp}}).then(response=>{
               commit('deleteItem',{name:payload.st_method,id:payload.index})
         }).catch(e=>{
@@ -68,6 +73,14 @@ const actions={
         }).catch(e=>{
             console.log(e)
         })
+    },
+    async getEmptyColumns({commit},payload){
+        await HTTP.post('api/schemeDataStoredPorcedur',payload).then(response=>{
+
+            commit('addEmptyFields',{name:payload.table,data:response.data})
+        }).catch(e=>{
+
+        })
     }
 
 
@@ -75,8 +88,9 @@ const actions={
 }
 
 const mutations  = {
-    setDick(state,commitData){
-        state[commitData.name]=commitData.data
+    setDick(state,commitData) {
+        state[commitData.name] = commitData.data
+
     },
     setStatus(state,commitData){
        state[commitData.name][commitData.id].status=commitData.value
@@ -96,8 +110,10 @@ const mutations  = {
         for (let item_key in state[commitData.name][state_index]){
             state[commitData.name][state_index][item_key]=commitData.data[item_key]
         }
-       
-
+    },
+    addEmptyFields(state,commitData){
+        console.log(commitData)
+        state.emptyFields[commitData.name]=commitData.data
     }
 }
 

@@ -47,13 +47,14 @@
         props:{
             mode:{type:Boolean,default:false},
             field_set:{type:Object,default:()=>{return {}}},
+            table_name:{type:String,default:''}
         },
         data(){
             return{
                 was_edit:false,
                 show_confirm_gr:false,
                 valid:true,
-                preload:false
+                preload:false,
             }
         },
         components:{
@@ -61,16 +62,25 @@
         },
         computed:{
             ...mapGetters({
-                getItemStatus:'storedProcedure/getItemStatus'
+                getItemStatus:'storedProcedure/getItemStatus',
+
             }),
+
             show_confirm_cmp(){
                 return this.was_edit && this.show_confirm_gr
             }
         },
+        mounted(){
+            this.$nextTick(async function(){
+
+
+            })
+        },
         methods:{
             ...mapActions({
                 addItemAction: "storedProcedure/createItemAction",
-                editItemAction: "storedProcedure/editItemAction"
+                editItemAction: "storedProcedure/editItemAction",
+
             }),
 
 
@@ -125,8 +135,9 @@
                 }
             },
             getMethodName(){
-                return Object.keys(this.field_set)[0].replace('_ID',"")
-            }
+                return Object.keys(this.field_set)[0].replace('_ID',"").replace('ID','')
+            },
+
 
 
 
