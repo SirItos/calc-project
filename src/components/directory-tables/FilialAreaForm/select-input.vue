@@ -4,15 +4,17 @@
             :label="comp_head"
             :loading="loading"
             :items="items"
+            :item-value="(comp_items[0]+'_ID')||''"
+            :item-text="(comp_items[1])||''"
             :search-input.sync="search"
+            :rules="[v => !!v || ('Требуется заполнить поле')]"
             clearable
             :hide-no-data="after_search"
             open-on-clear
+            :multiple="test"
             hide-selected
             @focus="get_enum_list()"
-
-
-
+            @change="(val)=>{this.$emit('change_val_sel',val)}"
     >
         <template slot="no-data">
             <v-list-tile>
@@ -26,6 +28,7 @@
 </template>
 
 <script>
+    import {mapGetters,mapActions} from 'vuex'
     export default {
         name: "select-input",
         props:{
@@ -40,15 +43,49 @@
                 after_search:true
             }
         },
+        mounted(){
+            this.$nextTick(()=> {
+                if (this.field_value!==""){
+                    if(this.getEnum(this.table_name)){
+                        this.items=this.getEnum(this.table_name);
+                    }else{
+                        this.get_enum_list();
+                    }
+                }
+
+            })
+        },
         computed:{
+            ...mapGetters({
+                getEnum:'storedProcedure/getEnumList',
+            }),
+            table_name(){
+                return this.field_header.split('_')[0]
+            },
             comp_head(){
                 return (this.field_header.split('_')[1])||this.field_header;
+            },
+            comp_items(){
+                return this.field_header.split('_')
+            },
+            test(){
+                return (this.table_name!=='Filial')
             }
         },
         methods:{
-            get_enum_list(){
-                console.log('Loading Items from server');
-                this.loading=true
+            ...mapActions({
+                getEnumList: "storedProcedure/getEnumListAction",
+            }),
+            async get_enum_list(){
+                if (!this.items.length>0){
+                   this.loading=true;
+                    await this.getEnumList({
+                        st_method:this.table_name,
+                        status:0
+                    })
+                    this.items = this.getEnum(this.table_name)
+                    this.loading=false;
+                }
             }
         }
     }

@@ -3,7 +3,8 @@ import router from '../../router'
 
 
 const state={
-    emptyFields:{}
+    emptyFields:{},
+    enumList:{}
 }
 
 const getters={
@@ -19,6 +20,9 @@ const getters={
     },
     getEmpty: state => name=> {
         return state.emptyFields[name]
+    },
+    getEnumList: state => name=>{
+        return state.enumList[name]
     }
 }
 //getListStoredPorcedur
@@ -45,7 +49,7 @@ const actions={
     },
 
     async deleteItemAction({commit,dispatch},payload){
-
+        console.log(payload)
         await HTTP.post('api/deleteDataStoredPorcedur',{st_method:payload.st_method,params_arr:{id:payload.params_arr.id,RecordTimestamp:payload.params_arr.RecordTimestamp}}).then(response=>{
               commit('deleteItem',{name:payload.st_method,id:payload.index})
         }).catch(e=>{
@@ -81,9 +85,17 @@ const actions={
         }).catch(e=>{
 
         })
+    },
+    async getEnumListAction({commit},payload){
+        await HTTP.post('api/enumListDataStoredPorcedur',payload).then(response=>{
+            commit('setEnumList',{
+                name:payload.st_method,
+                data:response.data
+            })
+        }).catch(e=>{
+
+        })
     }
-
-
 
 }
 
@@ -112,8 +124,10 @@ const mutations  = {
         }
     },
     addEmptyFields(state,commitData){
-        console.log(commitData)
         state.emptyFields[commitData.name]=commitData.data
+    },
+    setEnumList(state,commitData){
+        state.enumList[commitData.name]=commitData.data
     }
 }
 

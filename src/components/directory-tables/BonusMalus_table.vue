@@ -259,7 +259,7 @@
                     st_method:this.procedure,
                     index:this.list.indexOf(item),
                     params_arr:{
-                        id:item.Filial_ID,
+                        id:item.BonusMalus_ID,
                         RecordTimestamp:item.RecordTimestamp
                     }
                 }

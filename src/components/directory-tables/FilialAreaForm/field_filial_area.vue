@@ -2,7 +2,7 @@
     <v-flex :class="comp_class">
         <text_input v-if="data_type==='nvarchar'" :field_header="data_header" :field_value="data_value[data_header]" @change_val="newVal" ></text_input>
         <date_input v-if="data_type==='datetime'" :field_header="data_header" :field_value="data_value[data_header]" @change_val="newVal"></date_input>
-        <select_input v-if="data_type==='select'" :field_header="data_header" :field_value="data_value[data_header]" @change_val="newVal"></select_input>
+        <select_input v-if="data_type==='select'" :field_header="data_header" :field_value="data_value[data_header.split('_')[0]+'_ID']" @change_val_sel="newVal_select" ></select_input>
     </v-flex>
 </template>
 
@@ -15,7 +15,7 @@
         props:{
             data_type:{type:String,default:'text'},
             data_value:{},
-            data_header:{type:String,default:''}
+            data_header:{type:String,default:''},
         },
         components:{
             text_input,
@@ -30,6 +30,10 @@
         methods:{
             newVal(val){
                 this.$set(this.data_value,this.data_header,val)
+                this.$emit('wasedit')
+            },
+            newVal_select(val){
+                this.$set(this.data_value,this.data_header.split('_')[0]+'_ID',(val)||'')
                 this.$emit('wasedit')
             }
         }

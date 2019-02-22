@@ -264,7 +264,6 @@
             open_modal(open,mode=false,fields=null){
                 this.modal=open
                 this.edit_modal=mode
-                console.log(this.list.length)
                 if (this.list.length>0) {
                     this.prep_field_set = ((fields) ? this.clone(fields) : this.create_set())
                 }else{

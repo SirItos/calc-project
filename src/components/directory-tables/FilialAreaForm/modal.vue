@@ -14,7 +14,7 @@
             <v-form ref="fmodal" v-model="valid" lazy-validation>
                 <v-container grid-list-md>
                     <v-layout wrap>
-                        <field_create v-for="(field,index) in field_set" :data_value="field_set" :key="index" :data_type="check_type(index)" :data_header="index" v-if="check(index)" @wasedit="was_edit=true"></field_create>
+                        <field_create v-for="(field,index) in field_set" :data_value="field_set" :key="index" :data_type="check_type(index)" :data_header="index" v-if="check(index)" @wasedit="was_edit=true" ></field_create>
                     </v-layout>
                 </v-container>
             </v-form>
