@@ -19,8 +19,7 @@
         <template slot="no-data">
             <v-list-tile>
                 <v-list-tile-title>
-    Поиск не принес результатов Т_Т
-
+                    Поиск не принес результатов Т_Т
                 </v-list-tile-title>
             </v-list-tile>
         </template>
@@ -40,7 +39,7 @@
                 search:null,
                 loading:false,
                 items:[],
-                after_search:true
+                after_search:true,
             }
         },
         mounted(){
@@ -48,6 +47,7 @@
                 if (this.field_value!==""){
                     if(this.getEnum(this.table_name)){
                         this.items=this.getEnum(this.table_name);
+
                     }else{
                         this.get_enum_list();
                     }
@@ -71,6 +71,7 @@
             test(){
                 return (this.table_name!=='Filial')
             }
+
         },
         methods:{
             ...mapActions({

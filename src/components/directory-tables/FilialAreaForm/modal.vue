@@ -79,7 +79,7 @@
         methods:{
             ...mapActions({
                 addItemAction: "storedProcedure/createItemAction",
-                editItemAction: "storedProcedure/editItemAction",
+                editItemAction: "storedProcedure/edtiItemWithSelect",
 
             }),
 
@@ -110,11 +110,27 @@
                 }
 
             },
-
             async edit_item(){
                 await this.editItemAction({
                     st_method:this.getMethodName(),
-                    params_arr:this.field_set
+                    params_arr:{
+                        FilialInsuranceArea_ID:this.field_set.FilialInsuranceArea_ID,
+                        InsuranceArea_ID:this.field_set.InsuranceArea_ID,
+                        Filial_ID:this.field_set.Filial_ID,
+                        "Дата начала":this.field_set['Дата начала'], //косяпорищеееее..... ну такие данные приходят с бд
+                        "Дата окончания":this.field_set['Дата окончания'], //косяпорищеееее..... ну такие данные приходят с бд
+                        RecordTimestamp: this.field_set.RecordTimestamp,
+                        type:this.field_set.type
+                    },
+
+                    cic_arr:this.field_set.InsuranceArea_ID,
+                    find_in:'InsuranceArea_ID',
+                    grouping:'Filial_ID',
+                    fields_to_merge:[
+                        'InsuranceArea_ID',
+                        'InsuranceArea_Территория страхования'
+                    ]
+
                 })
                 this.resultAddEdit('изменен.')
             },

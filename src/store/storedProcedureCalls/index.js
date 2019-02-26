@@ -28,11 +28,11 @@ const getters={
 //getListStoredPorcedur
 
 const actions={
+    //Получить список записей для таблицы
     async getList (context, payload){
         await HTTP.post('api/getListStoredPorcedur',{
             st_method:payload.procedure
         }).then(response=>{
-
             response.data.forEach(item =>{
                 item.status=response.status
             })
@@ -48,6 +48,9 @@ const actions={
         })
     },
 
+
+
+    //удалить элемент из таблицы (если в элементе нет select'ов или любые его поля не являются массивами/объектами)
     async deleteItemAction({commit,dispatch},payload){
         console.log(payload)
         await HTTP.post('api/deleteDataStoredPorcedur',{st_method:payload.st_method,params_arr:{id:payload.params_arr.id,RecordTimestamp:payload.params_arr.RecordTimestamp}}).then(response=>{
@@ -57,7 +60,7 @@ const actions={
             commit('setStatus',{name:payload.st_method,id:payload.id,value:e})
         })
     },
-
+    //создать новый  элемент (если в элементе нет select'ов или любые его поля не являются массивами/объектами)
     async createItemAction({commit,dispatch},payload){
         let result=payload.params_arr
         await HTTP.post('api/addDataStoredPorcedur',payload).then(response=>{
@@ -69,15 +72,17 @@ const actions={
 
         })
     },
+    //редактировать элемент (если в элементе нет select'ов или любые его поля не являются массивами/объектами)
     async editItemAction({commit},payload){
         let result = payload.params_arr
         await HTTP.post('api/editDataStoredPorcedur',payload).then(response=>{
-                result.state=response.data[0].TIME_STAMP
+              result.state=response.data[0].TIME_STAMP
               commit('editState',{name:payload.st_method,data:result})
         }).catch(e=>{
             console.log(e)
         })
     },
+    //Получить пустую структуру соответствующую поялм таблицы (колонкам)
     async getEmptyColumns({commit},payload){
         await HTTP.post('api/schemeDataStoredPorcedur',payload).then(response=>{
 
@@ -86,6 +91,7 @@ const actions={
 
         })
     },
+    //Получить данные для выпадающего списка
     async getEnumListAction({commit},payload){
         await HTTP.post('api/enumListDataStoredPorcedur',payload).then(response=>{
             commit('setEnumList',{
@@ -94,6 +100,43 @@ const actions={
             })
         }).catch(e=>{
 
+        })
+    },
+    async getListGroupSelect (context, payload){
+        await HTTP.post('api/getListSelectDataStoredPorcedur',{
+            st_method:payload.procedure,
+            grouping:payload.grouping,
+            fields_to_merge:payload.fields_to_merge
+        }).then(response=>{
+            response.data.forEach(item =>{
+                item.status=response.status
+            })
+            let commitData={
+                name:payload.procedure,
+                data:response.data
+            }
+            context.commit('setDick',commitData);
+        }).catch((e,response)=>{
+            // context.dispatch(`user/logout`,{},{root:true}) пока не нужна
+            console.log(e)
+            console.log(response)
+        })
+    },
+    async edtiItemWithSelect({commit,dispatch},payload){
+        console.log(payload)
+        await HTTP.post('api/editListSelectDataStoredPorcedur',{
+                st_method:payload.st_method,
+                params: payload.params_arr,
+                cic_arr:payload.cic_arr,
+                find_in:payload.find_in
+        }).then(response => {
+             dispatch('getListGroupSelect',{
+                 procedure:payload.st_method,
+                 grouping:payload.grouping,
+                 fields_to_merge:payload.fields_to_merge
+             })
+        }).catch(e => {
+            console.log(e)
         })
     }
 

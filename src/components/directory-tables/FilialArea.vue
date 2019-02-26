@@ -54,7 +54,8 @@
                         <template slot="items" slot-scope="props">
 
                             <tr >
-                                <td v-for="(cell,index) in props.item" :key="index" v-if="check(index)" class="text-md-center text-sm-center">{{(setType(props.item,index))?cell:convertToData(cell,true,props.item,index)}}</td>
+                                <td v-for="(cell,index) in props.item" :key="index" v-if="check(index)" class="text-md-center text-sm-center" v-html="array_check(cell)">
+                                    {{(setType(props.item,index))?array_check(cell):convertToData(cell,true,props.item,index)}}</td>
                                 <td class="text-md-center text-sm-center px-1" style="width:100px!important">
                                     <v-btn fab small  flat ripple color="info" class="data_table_btn" @click="open_modal(true,true,props.item)" >
                                         <v-icon  >mdi-pencil</v-icon>
@@ -213,23 +214,27 @@
                     set.push({text: '', value: this.headers[0], align: 'center',sortable: false})
                 }
                 return set
-            }
+            },
         },
         methods:{
             ...mapActions({
-                getList: "storedProcedure/getList",
+                getList: "storedProcedure/getListGroupSelect",
                 deleteItemAction: "storedProcedure/deleteItemAction",
                 actionEmptyFields: "storedProcedure/getEmptyColumns"
             }),
             async setDataFromServer() {
                 await this.getList({
-                    procedure:this.procedure
+                    procedure:this.procedure,
+                    grouping:'Filial_ID',
+                    fields_to_merge:[
+                        'InsuranceArea_ID',
+                        'InsuranceArea_Территория страхования'
+                    ]
                 })
 
                 this.list = (this.getDickData(this.procedure))
                 if (this.list.length===0)
                     this.getEmptyFields();
-                // await this.setHeaders()
                 this.loading = false;
 
             },
@@ -291,6 +296,8 @@
                 }
             },
             snack_show(obj){
+                console.log(this.getDickData(this.procedure));
+                this.list = this.getDickData(this.procedure);
                 this.$set(this.snackbar,'color',obj.color)
                 this.$set(this.snackbar,'text',obj.text)
                 this.$set(this.snackbar,'mode',true)
@@ -326,7 +333,6 @@
             },
             convertToData(strDate,first=false,item='',index=''){
                 if (first){
-                    console.log()
                     this.$set(item,index,this.$moment(strDate,'YYYY-MM-DD').format('YYYY-MM-DD'))
                 }
                 return this.$moment(strDate,'YYYY-MM-DD').format('DD.MM.YYYY');
@@ -334,6 +340,16 @@
             prepName(item){
 
                 return (item.split('_')[1])||item;
+            },
+            array_check(item){
+               let result=item;
+                if (typeof(item)!=='string'){
+                    result='';
+                   item.forEach( val => {
+                       result+="<div>"+val+"</div>";
+                   })
+                }
+                return result
             }
         }
     }

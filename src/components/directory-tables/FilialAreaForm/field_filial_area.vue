@@ -26,6 +26,7 @@
             comp_class(){
                 return  (Object.keys(this.data_value).length>5)?'xs12 sm12 md6':'md12 sm12 xs12'
             }
+
         },
         methods:{
             newVal(val){
