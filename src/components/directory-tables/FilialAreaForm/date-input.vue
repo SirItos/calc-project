@@ -49,7 +49,6 @@
             },
             computedDateFormattedToSend(){
                 if (!this.day) return null
-                console.log(this.day)
                 return this.$moment(this.day).format('YYYY-MM-DD')
             }
         },

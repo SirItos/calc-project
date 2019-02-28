@@ -44,14 +44,7 @@
         },
         mounted(){
             this.$nextTick(()=> {
-                if (this.field_value!==""){
-                    if(this.getEnum(this.table_name)){
-                        this.items=this.getEnum(this.table_name);
-
-                    }else{
-                        this.get_enum_list();
-                    }
-                }
+              this.get_enum_list()
 
             })
         },

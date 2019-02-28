@@ -219,7 +219,7 @@
         methods:{
             ...mapActions({
                 getList: "storedProcedure/getListGroupSelect",
-                deleteItemAction: "storedProcedure/deleteItemAction",
+                deleteItemAction: "storedProcedure/deleteItemActionList",
                 actionEmptyFields: "storedProcedure/getEmptyColumns"
             }),
             async setDataFromServer() {
@@ -227,12 +227,14 @@
                     procedure:this.procedure,
                     grouping:'Filial_ID',
                     fields_to_merge:[
+                         this.procedure+'_ID',
+                        'RecordTimestamp',
                         'InsuranceArea_ID',
                         'InsuranceArea_Территория страхования'
                     ]
                 })
 
-                this.list = (this.getDickData(this.procedure))
+                this.list = (this.getDickData(this.procedure)) || [];
                 if (this.list.length===0)
                     this.getEmptyFields();
                 this.loading = false;
@@ -250,7 +252,7 @@
                     st_method:this.procedure,
                     index:this.list.indexOf(item),
                     params_arr:{
-                        id:item.Filial_ID,
+                        id:item.FilialInsuranceArea_ID,
                         RecordTimestamp:item.RecordTimestamp
                     }
                 }
@@ -269,11 +271,8 @@
             open_modal(open,mode=false,fields=null){
                 this.modal=open
                 this.edit_modal=mode
-                if (this.list.length>0) {
-                    this.prep_field_set = ((fields) ? this.clone(fields) : this.create_set())
-                }else{
-                    this.prep_field_set= this.clone( this.getEmpty(this.procedure))
-                }
+                this.prep_field_set = ((fields) ? this.clone(fields) : this.create_set())
+
 
 
             },
@@ -281,12 +280,28 @@
                 return Object.assign({}, fields);
             },
             create_set(){
-                let result={}
-                Object.keys(this.list[0]).forEach(item => {
-                    this.$set(result,item,"")
-                })
-                this.$set(result,'type',this.list[0].type)
-                return result
+                return {
+                    FilialInsuranceArea_ID:[],
+                    Filial_ID:'',
+                    Filial_Филиал:'',
+                    InsuranceArea_ID:[],
+                    'InsuranceArea_Территория страхования':[],
+                    RecordTimestamp:[],
+                    status:200,
+                    type:{
+                        FilialInsuranceArea_ID:"bigint identity",
+                        Filial_ID:"bigint",
+                        Filial_Филиал:"nvarchar",
+                        InsuranceArea_ID:"bigint",
+                        'InsuranceArea_Территория страхования':"nvarchar",
+                        RecordTimestamp:"bigint",
+                        'Дата начала':"datetime",
+                        'Дата окончания':"datetime"
+                    },
+                    'Дата начала':'',
+                    'Дата окончания':''
+
+            }
             },
             close_modal(save=false){
                 this.modal=false;
@@ -295,16 +310,25 @@
                     this.prep_field_set={}
                 }
             },
-            snack_show(obj){
-                console.log(this.getDickData(this.procedure));
+            async snack_show(obj){
+                await this.getList({
+                    procedure:this.procedure,
+                    grouping:'Filial_ID',
+                    fields_to_merge:[
+                        this.procedure+'_ID',
+                        'InsuranceArea_ID',
+                        'InsuranceArea_Территория страхования',
+                        'RecordTimestamp'
+                    ]
+                })
                 this.list = this.getDickData(this.procedure);
                 this.$set(this.snackbar,'color',obj.color)
                 this.$set(this.snackbar,'text',obj.text)
                 this.$set(this.snackbar,'mode',true)
+
             },
             async getEmptyFields(){
                 if (!this.getEmpty(this.procedure)){
-
                     await  this.actionEmptyFields({table:this.procedure})
                 }
             },

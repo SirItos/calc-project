@@ -78,7 +78,7 @@
         },
         methods:{
             ...mapActions({
-                addItemAction: "storedProcedure/createItemAction",
+                addItemAction: "storedProcedure/createItemActionList",
                 editItemAction: "storedProcedure/edtiItemWithSelect",
 
             }),
@@ -127,6 +127,8 @@
                     find_in:'InsuranceArea_ID',
                     grouping:'Filial_ID',
                     fields_to_merge:[
+                        'FilialInsuranceArea_ID',
+                        'RecordTimestamp',
                         'InsuranceArea_ID',
                         'InsuranceArea_Территория страхования'
                     ]
@@ -138,7 +140,19 @@
             async create_new_item(){
                 await this.addItemAction({
                     st_method:this.getMethodName(),
-                    params_arr:this.field_set
+                    field_to_search:'InsuranceArea_ID',
+                    params_arr:{
+                        FilialInsuranceArea_ID:this.field_set.FilialInsuranceArea_ID,
+                        InsuranceArea_ID:this.field_set.InsuranceArea_ID,
+                        Filial_ID:this.field_set.Filial_ID,
+                        "Дата начала":this.field_set['Дата начала'], //косяпорищеееее..... ну такие данные приходят с бд
+                        "Дата окончания":this.field_set['Дата окончания'], //косяпорищеееее..... ну такие данные приходят с бд
+                        RecordTimestamp: this.field_set.RecordTimestamp,
+                        type:this.field_set.type
+                    },
+                    fields_with_arr:[
+                        'InsuranceArea_ID'
+                    ]
                 })
                 this.resultAddEdit('добавлен.')
 
@@ -151,7 +165,7 @@
                 }
             },
             getMethodName(){
-                return Object.keys(this.field_set)[0].replace('_ID',"").replace('ID','')
+                return Object.keys(this.field_set)[0].replace('_ID','').replace('ID','')
             },
             check_type(item){
                 let split =item.split('_')

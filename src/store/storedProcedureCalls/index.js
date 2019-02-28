@@ -52,7 +52,6 @@ const actions={
 
     //удалить элемент из таблицы (если в элементе нет select'ов или любые его поля не являются массивами/объектами)
     async deleteItemAction({commit,dispatch},payload){
-        console.log(payload)
         await HTTP.post('api/deleteDataStoredPorcedur',{st_method:payload.st_method,params_arr:{id:payload.params_arr.id,RecordTimestamp:payload.params_arr.RecordTimestamp}}).then(response=>{
               commit('deleteItem',{name:payload.st_method,id:payload.index})
         }).catch(e=>{
@@ -123,20 +122,34 @@ const actions={
         })
     },
     async edtiItemWithSelect({commit,dispatch},payload){
-        console.log(payload)
         await HTTP.post('api/editListSelectDataStoredPorcedur',{
                 st_method:payload.st_method,
                 params: payload.params_arr,
                 cic_arr:payload.cic_arr,
                 find_in:payload.find_in
-        }).then(response => {
-             dispatch('getListGroupSelect',{
-                 procedure:payload.st_method,
-                 grouping:payload.grouping,
-                 fields_to_merge:payload.fields_to_merge
-             })
         }).catch(e => {
             console.log(e)
+        })
+    },
+    async deleteItemActionList({commit},payload){
+        await HTTP.post('api/deleteListSelectDataStoredPorcedur',{st_method:payload.st_method,params_arr:{id:payload.params_arr.id,RecordTimestamp:payload.params_arr.RecordTimestamp}}).then(response=>{
+            commit('deleteItem',{name:payload.st_method,id:payload.index})
+        }).catch(e=>{
+            console.log(e)
+            commit('setStatus',{name:payload.st_method,id:payload.id,value:e})
+        })
+    },
+    async createItemActionList({commit,dispatch},payload){
+        let result=payload.params_arr
+        await HTTP.post('api/addListSelectDataStoredPorcedur',payload).then(response=>{
+            response.data.forEach( itm =>{
+                result['status']=response.status
+                result[payload.st_method+'_ID'].push(response.data[0].RESULT_VALUE)
+                result['RecordTimestamp'].push(response.data[0].TIME_STAMP)
+            })
+            commit('addItem',{name:payload.st_method,data:result})
+        }).catch(e=>{
+
         })
     }
 
@@ -151,7 +164,6 @@ const mutations  = {
        state[commitData.name][commitData.id].status=commitData.value
     },
     deleteItem(state,commitData){
-
         state[commitData.name].splice(commitData.id,1)
     },
     addItem(state,commitData){
