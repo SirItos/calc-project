@@ -54,8 +54,8 @@
                         <template slot="items" slot-scope="props">
 
                             <tr >
-                                <td v-for="(cell,index) in props.item" :key="index" v-if="check(index)" class="text-md-center text-sm-center" v-html="array_check(cell)">
-                                    {{(setType(props.item,index))?array_check(cell):convertToData(cell,true,props.item,index)}}</td>
+                                <td v-for="(cell,index) in props.item" :key="index" v-if="check(index)" class="text-md-center text-sm-center" v-html="array_check(cell,props.item,index)">
+                                   </td>
                                 <td class="text-md-center text-sm-center px-1" style="width:100px!important">
                                     <v-btn fab small  flat ripple color="info" class="data_table_btn" @click="open_modal(true,true,props.item)" >
                                         <v-icon  >mdi-pencil</v-icon>
@@ -365,7 +365,8 @@
 
                 return (item.split('_')[1])||item;
             },
-            array_check(item){
+            array_check(item,props,index){
+
                let result=item;
                 if (typeof(item)!=='string'){
                     result='';
@@ -373,6 +374,7 @@
                        result+="<div>"+val+"</div>";
                    })
                 }
+                result = (this.setType(props,index))? result : this.convertToData(item,true,props,index)
                 return result
             }
         }
