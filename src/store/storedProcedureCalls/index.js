@@ -51,18 +51,16 @@ const actions={
         })
     },
 
-
-
     //удалить элемент из таблицы (если в элементе нет select'ов или любые его поля не являются массивами/объектами)
     async deleteItemAction({commit,dispatch},payload){
         await HTTP.post('api/deleteDataStoredPorcedur',{st_method:payload.st_method,params_arr:{id:payload.params_arr.id,RecordTimestamp:payload.params_arr.RecordTimestamp}}).then(response=>{
-            commit('setError',{
-                name:payload.st_method,
-                msg:null
-            })
-              commit('deleteItem',{name:payload.st_method,id:payload.index})
+            if (Number(response.data[0].RESULT_VALUE)>0){
+                commit('deleteItem',{name:payload.st_method,id:payload.index})
+            }else{
+                dispatch('ErrorAuth',{table_name:payload.st_method,status:Number(response.data[0].RESULT_VALUE)})
+            }
         }).catch(e=>{
-            context.dispatch('ErrorAuth',e.response.status)
+            dispatch('ErrorAuth',e.response.status)
             commit('setStatus',{name:payload.st_method,id:payload.id,value:e})
         })
     },
@@ -117,7 +115,7 @@ const actions={
                 msg:null
             })
             commit('setEnumList',{
-                name:payload.st_method+'_enum',
+                name:payload.st_method,
                 data:response.data
             })
         }).catch(e=>{
@@ -214,8 +212,20 @@ const actions={
              case 502:
                  msg= 'Ошибка шлюза'
                  break
+             case 0:
+                 msg = 'Общая ошибка'
+                 break
+             case -1:
+                 msg = 'Запись с такими данными уже существует'
+                 break
+             case -2:
+                 msg = 'timestamp не соответствует актуальному значению'
+                 break
+             case -3:
+                 msg = 'Существует привязка к другим элементам'
+                 break
              default:
-                 msg= 'Что-то пошлно не так'
+                 msg= null
                  break
         }
         commit('setError',{

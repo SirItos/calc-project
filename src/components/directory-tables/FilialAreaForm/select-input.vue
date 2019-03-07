@@ -44,7 +44,9 @@
         },
         mounted(){
             this.$nextTick(()=> {
-              this.get_enum_list()
+              if (this.$props.field_value)
+                  if (this.$props.field_value.length)
+                         this.get_enum_list()
 
             })
         },

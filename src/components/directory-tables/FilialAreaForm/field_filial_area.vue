@@ -35,6 +35,7 @@
             },
             newVal_select(val){
                 this.$set(this.data_value,this.data_header.split('_')[0]+'_ID',(val)||'')
+
                 this.$emit('wasedit')
             }
         }

@@ -183,24 +183,17 @@
                 preload:false
             }
         }),
-        created(){
-            this.$root.$emit('change_title', 'Уровень риска')
-        },
-        mounted(){
-            this.$nextTick(async function(){
-                this.setDataFromServer()
-
-            })
-        },
         computed:{
             ...mapGetters({
                 getDickData:'storedProcedure/getStoreList',
+                getItemStatus:'storedProcedure/getItemStatus',
                 getEmpty:'storedProcedure/getEmpty'
             }),
+            //Составление массива с именами колонок в таблице
             headers_set(){
                 let self = this;
                 let set=[]
-                if (this.list.length > 0) {
+                if (this.list.length) {
                     Object.keys(this.list[0]).forEach(item => {
                         if (self.check(item)) {
                             set.push({text: item, value: item, align: 'center',sortable:true})
@@ -215,80 +208,109 @@
                 return set
             }
         },
-        methods:{
+        //Изминяем заголовок страницы при создание компонента
+        created(){
+            this.$root.$emit('change_title', 'Уровни рисков')
+
+        },
+        //После рендеринга страницы запускаем метод для получения данных с сервера
+        mounted(){
+            this.$nextTick(async function(){
+                this.setDataFromServer()
+
+            })
+        },
+        methods: {
             ...mapActions({
                 getList: "storedProcedure/getList",
                 deleteItemAction: "storedProcedure/deleteItemAction",
                 actionEmptyFields: "storedProcedure/getEmptyColumns"
             }),
+            //МЕТОДЫ ДЛЯ РАБОТЫ С СЕРВЕРОМ (ЧИТАЙ ЗАПРОСЫ!)
+
+            //асинк метод для получения данных с сервера
+            //вызываемт vuex action
             async setDataFromServer() {
+                //Вызов action для получения данных
                 await this.getList({
                     procedure:this.procedure
                 })
-
-                this.list = (this.getDickData(this.procedure))
-                if (this.list.length===0)
-                    this.getEmptyFields();
-                // await this.setHeaders()
-                this.loading = false;
-
-            },
-            async setHeaders() {
-                let self = this;
-                if (this.list.length > 0) {
-                    Object.keys(this.list[0]).forEach(item => {
-                        if (self.check(item)) {
-                            this.headers.push({text: item, value: item, align: 'center',sortable:true})
-                        }
+                //геттером записываем в поле date полученные данные
+                //если их нет то присваиваем пустой массив.
+                this.list = ((this.getDickData(this.procedure)))|| []
+                //Проверяем статус ответа. Если он не пустой => ошибка.
+                if (this.getItemStatus(this.procedure)) {
+                    //Выводим snackbar с текстом ошибки
+                    this.snack_show({
+                        mode: true,
+                        color: 'error',
+                        text: this.getItemStatus(this.procedure)
                     })
-                    this.pagination = Object.assign({},this.pagination,{
-                        sortBy:this.headers[0].value,
-                        rowsPerPage:10
-                    })
-                    this.headers.push({text: '', value: this.headers[0], align: 'center',sortable: false})
                 }
+                this.loading = false;
             },
-            confirm_delete(item){
-                this.$set(this.confirm,'mode',true)
-                this.$set(this.confirm,'text',item[Object.keys(item)[1]])
-                this.$set(this.confirm,'item',item)
-            },
+            //асинк метод для вызова action на удаление элемента
             async deleteItem(item){
+                //выводим прелоадер
                 this.confirm.preload=true
                 let payload={
                     st_method:this.procedure,
                     index:this.list.indexOf(item),
                     params_arr:{
-                        id:item.Filial_ID,
+                        id:item.CarJackingRiskLevel_ID,
                         RecordTimestamp:item.RecordTimestamp
                     }
                 }
                 await this.deleteItemAction(payload);
                 this.confirm.mode=false
                 this.confirm.preload=false
-                this.prep_field_set={}
+                //Выводим сообщение --> или ошибка с текстом или сообщение об удаление элемента
                 this.snack_show({
                     mode:true,
-                    color:'warning',
-                    text:'Элемент '+this.confirm.text+' удален.'
+                    color: (this.getItemStatus(this.procedure)) ?'error' :'warning',
+                    text: (this.getItemStatus(this.procedure)) ? this.getItemStatus(this.procedure) : 'Элемент '+this.confirm.text+' удален.'
                 })
 
 
             },
-            open_modal(open,mode=false,fields=null){
-                this.modal=open
-                this.edit_modal=mode
-                if (this.list.length>0) {
+            //Получаем пустой набор полей если в пришедших данных изначально ничего нет.
+            // Необходимо для создания полей ввода информации в модальном окне..... лучше заменить на статичный набор данных
+            async getEmptyFields(){
+                if (!this.getEmpty(this.procedure)){
+                    //Если в наборе "пустых" ничего нет, запрашиваем данные с сервера
+                    await  this.actionEmptyFields({table:this.procedure})
+                    //    проверяем ответ от сервера
+                    if (this.getItemStatus(this.procedure+'_empty'))
+                        this.snack_show({
+                            mode:true,
+                            color: 'error',
+                            text: this.getItemStatus(this.procedure+'_empty')+' Схема таблицы не получена'
+                        })
+                }
+            },
+
+            // ДОПОЛНИТЕЛЬНЫЕ МЕТОДЫ
+
+            //Открытие модального окна, с передачей данных о структуре формы внутрь как props
+            async open_modal(open,mode=false,fields=null){
+                //Если таблица не пустая и у нас есть откуда взять струтуру полей
+                if (this.list.length) {
                     this.prep_field_set = ((fields) ? this.clone(fields) : this.create_set())
                 }else{
-                    this.prep_field_set= this.clone( this.getEmpty(this.procedure))
+                    await this.getEmptyFields()
+                    this.prep_field_set=( this.getEmpty(this.procedure))
                 }
-
-
+                if (!this.getItemStatus(this.procedure+'_empty')){
+                    this.modal=open
+                    this.edit_modal=mode
+                }
             },
+            //Клонирование полей таблицы для формы добавления/редактирования
+            //Необхолдимо для того, чтобы данные в форме не были реактивными
             clone(fields){
                 return Object.assign({}, fields);
             },
+            //Создание пустого набора данных на основание полей таблицы
             create_set(){
                 let result={}
                 Object.keys(this.list[0]).forEach(item => {
@@ -297,6 +319,7 @@
                 this.$set(result,'type',this.list[0].type)
                 return result
             },
+            //Закрытие модального окна
             close_modal(save=false){
                 this.modal=false;
                 if (save){
@@ -304,28 +327,30 @@
                     this.prep_field_set={}
                 }
             },
+            //Вывод всплывающего окна с информацией
             snack_show(obj){
                 this.$set(this.snackbar,'color',obj.color)
                 this.$set(this.snackbar,'text',obj.text)
                 this.$set(this.snackbar,'mode',true)
             },
-            async getEmptyFields(){
-                if (!this.getEmpty(this.procedure)){
-
-                    await  this.actionEmptyFields({table:this.procedure})
-                }
+            //Модальное окно подтверждения действия на удаление
+            confirm_delete(item){
+                this.$set(this.confirm,'mode',true)
+                this.$set(this.confirm,'text',item[Object.keys(item)[1]])
+                this.$set(this.confirm,'item',item)
             },
 
 
 
 
 
-
-
-
+            //ВСПОМОГАТЕЛЬНЫЕ
+            //проверка полей и заголовков
+            //Выводим только те поля которые удоволетворяют условие
             check(item) {
                 return (item.indexOf('ID') < 0 && item.indexOf('Record') < 0 && item.indexOf('status') < 0 && item.indexOf('type')<0)
             },
+
             changeSort(column) {
                 if (this.pagination.sortBy === column) {
                     this.pagination.descending = !this.pagination.descending
@@ -345,6 +370,7 @@
                 }
                 return this.$moment(strDate,'YYYY-MM-DD').format('DD.MM.YYYY');
             },
+
         }
     }
 </script>

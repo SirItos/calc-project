@@ -83,11 +83,13 @@
 
             }),
 
-
+            //ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
+            //проверка полей и заголовков
+            //Выводим только те поля которые удоволетворяют условие
             check(item) {
                 return (item.indexOf('ID') < 0 && item.indexOf('Record') < 0 && item.indexOf('status') < 0 && item.indexOf('type')<0)
             },
-
+            //Закрыть модальное окно
             close_modal(){
                 if (this.was_edit){
                     this.show_confirm_gr=true
@@ -95,7 +97,6 @@
                     this.close_modal_window()
                 }
             },
-
             close_modal_window(){
                 this.show_confirm_gr=false
                 this.was_edit=false
@@ -103,6 +104,8 @@
                 this.$emit('dialog_close',false)
             },
 
+            //Работа с actions
+            //Сохранить данные
             async save_modal(){
                 if (this.$refs.fmodal.validate()) {
                     this.preload=true;
@@ -110,6 +113,7 @@
                 }
 
             },
+            //Методы по работе с actions и серверной частью
             async edit_item(){
                 await this.editItemAction({
                     st_method:this.getMethodName(),
@@ -158,10 +162,15 @@
 
             },
             resultAddEdit(text){
-                if(this.getItemStatus(this.field_set[this.getMethodName()+'_ID'],this.getMethodName())===200){
+                if(!this.getItemStatus(this.getMethodName())){
                     this.preload=false
-                    this.$emit('resultHTTP',{color:'success',text:'Элемент '+this.field_set[Object.keys(this.field_set)[1]]+' '+text})
+                    console.log(this.field_value)
+                    console.log('Элемент '+this.field_set.Filial_Филиал+' '+text)
+                    this.$emit('resultHTTP',{color:'success',text:'Элемент '+this.field_set.Filial_Филиал+' '+text})
                     this.close_modal_window()
+                }else{
+                    this.preload=false
+                    this.$emit('resultHTTP',{color:'error',text:this.getItemStatus(this.getMethodName())})
                 }
             },
             getMethodName(){
