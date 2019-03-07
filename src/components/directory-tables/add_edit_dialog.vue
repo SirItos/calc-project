@@ -40,13 +40,13 @@
 </template>
 
 <script>
-    import field_create from './directory_form_creater'
+    import field_create from './inputs/directory_form_creater'
     import {mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
         name: "add_edit_dialog",
         props:{
             mode:{type:Boolean,default:false},
-            field_set:{type:Object,default:()=>{return {}}},
+            field_set:{},
             table_name:{type:String,default:''}
         },
         data(){
@@ -70,12 +70,6 @@
                 return this.was_edit && this.show_confirm_gr
             }
         },
-        mounted(){
-            this.$nextTick(async function(){
-
-
-            })
-        },
         methods:{
             ...mapActions({
                 addItemAction: "storedProcedure/createItemAction",
@@ -83,26 +77,23 @@
 
             }),
 
-
-            check(item) {
-                return (item.indexOf('ID') < 0 && item.indexOf('Record') < 0 && item.indexOf('status') < 0 && item.indexOf('type')<0)
-            },
-
+            // ДОПОЛНИТЕЛЬНЫЕ МЕТОДЫ
+            //подтверждение действий перед закрытие модального окна
             close_modal(){
                 if (this.was_edit){
                     this.show_confirm_gr=true
                 }else{
-                   this.close_modal_window()
+                    this.close_modal_window()
                 }
             },
-
+            //закрытие модального окна
             close_modal_window(){
-               this.show_confirm_gr=false
-               this.was_edit=false
-               this.valid=true;
-               this.$emit('dialog_close',false)
+                this.show_confirm_gr=false
+                this.was_edit=false
+                this.valid=true;
+                this.$emit('dialog_close',false)
             },
-
+            //сохранение результата
             async save_modal(){
                 if (this.$refs.fmodal.validate()) {
                     this.preload=true;
@@ -110,7 +101,15 @@
                 }
 
             },
-
+            //ВСПОМОГАТЕЛЬНЫЕ
+            //проверка полей и заголовков
+            //Выводим только те поля которые удоволетворяют условие
+            check(item) {
+                if (typeof(item)==='string')
+                    return (item.indexOf('ID') < 0 && item.indexOf('Record') < 0 && item.indexOf('status') < 0 && item.indexOf('type')<0)
+                return false
+            },
+            //Методы по работе с actions и серверной частью
             async edit_item(){
                 await this.editItemAction({
                     st_method:this.getMethodName(),
@@ -128,10 +127,13 @@
 
             },
             resultAddEdit(text){
-                if(this.getItemStatus(this.field_set[this.getMethodName()+'_ID'],this.getMethodName())===200){
+                if(!this.getItemStatus(this.getMethodName())){
                     this.preload=false
                     this.$emit('resultHTTP',{color:'success',text:'Элемент '+this.field_set[Object.keys(this.field_set)[1]]+' '+text})
                     this.close_modal_window()
+                }else{
+                    this.preload=false
+                    this.$emit('resultHTTP',{color:'error',text:this.getItemStatus(this.getMethodName())})
                 }
             },
             getMethodName(){

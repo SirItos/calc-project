@@ -42,12 +42,12 @@
 </template>
 
 <script>
-    import directory_test from './directory_test'
-    import InsuranceArea_table from './directory-tables/InsuranceArea_table'
-    import Filialtable from './directory-tables/Filial_table'
-    import BonusMalus_table from './directory-tables/BonusMalus_table'
-    import carjackingrisklevel from './directory-tables/CarJackingRiskLevel_table'
-    import FilialArea from './directory-tables/FilialArea'
+    import directory_test from '../components/directory-tables/directory_test'
+    import InsuranceArea_table from '../components/directory-tables/InsuranceArea_table'
+    import Filialtable from '../components/directory-tables/Filial_table'
+    import BonusMalus_table from '../components/directory-tables/BonusMalus_table'
+    import carjackingrisklevel from '../components/directory-tables/CarJackingRiskLevel_table'
+    import FilialArea from '../components/directory-tables/FilialArea'
     export default {
         components: {
             directory_test,

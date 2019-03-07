@@ -11,9 +11,14 @@ const state ={
 //getters
 const getters = {
   getCalculations : state => state.calculations_progress,
-   getCalculationById: state => id =>{
+  getCalculationById: state => id =>{
       return (state.calculations_progress.find(itm => itm.id === id))||[]
-    }
+  },
+  getSomeJsonData : state => {
+      console.log(1)
+      return (state.calculations_progress.length) ? state.calculations_progress :null
+  }
+
 }
 
 //actions

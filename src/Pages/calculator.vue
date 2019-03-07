@@ -350,9 +350,9 @@
 </template>
 
 <script>
-    import select_item from "./select_item.vue"
-    import check_item from "./check-item.vue"
-    import input_group from "./input_group.vue"
+    import select_item from "../components/select_item.vue"
+    import check_item from "../components/check-item.vue"
+    import input_group from "../components/input_group.vue"
     import {mapGetters,mapActions,mapMutations} from "vuex"
     export default {
         name: "calculator",

@@ -6,8 +6,8 @@
 </template>
 
 <script>
-    import text_input from './fields_to_create_directory/text_input'
-    import date_input from './fields_to_create_directory/date_input'
+    import text_input from './text_input'
+    import date_input from './date_input'
     export default {
         name: "directory_form_creater",
         props:{

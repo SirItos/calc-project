@@ -1,11 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import calculator from '@/components/calculator'
-import calculations from '@/components/calculations'
-import history from '@/components/history'
-import object from '@/components/history_object'
-import directory from '@/components/directory'
-import directory_test from '@/components/directory_test'
 import store from '../store'
 
 Vue.use(Router)
@@ -32,46 +26,46 @@ export default new Router({
         path:'/login',
         name:'loginForm',
         beforeEnter:ifNotAuth,
-        component: ()=>import('@/components/loginForm')
+        component: ()=>import('@/Pages/loginForm')
     },
     {
       path: '/',
       name: 'calculations',
       beforeEnter:ifAuth,
-      component: calculations
+      component: () => import('@/Pages/calculations')
     },
       {
           path: '/calculator/:id',
           name: 'calculator',
           beforeEnter:ifAuth,
-          component: calculator,
+          component: () =>  import('@/Pages/calculator'),
           props:true
       },
       {
           path: '/history',
           name: 'history',
           beforeEnter:ifAuth,
-          component: history,
+          component: () => import('@/Pages/history')
       },
        {
           path: '/object/:id',
           name: 'object',
           beforeEnter:ifAuth,
-          component: object,
+          component: () =>import('@/Pages/history_object'),
           props: true
       },
       {
           path: '/directory',
           name: 'directory',
           beforeEnter:ifAuth,
-          component:directory
+          component:()=> import('@/Pages/directory')
       },
       {
-          path: '/directory_test',
-          name: 'directory_test',
-          beforeEnter:ifAuth,
-          component:directory_test
+          path: '/jsonout',
+          name: 'jsonout',
+          component:() => import('@/Pages/jsonOutput')
       }
+
 
 
   ]

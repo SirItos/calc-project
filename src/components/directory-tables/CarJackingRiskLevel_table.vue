@@ -152,7 +152,7 @@
 <script>
     // название столбцов для этой таблицы.
     import {mapGetters,mapActions,mapMutations} from 'vuex'
-    import c_modal from '../add_edit_dialog'
+    import c_modal from './add_edit_dialog'
     export default {
         name: "carjackingRiskLevel",
         components:{
