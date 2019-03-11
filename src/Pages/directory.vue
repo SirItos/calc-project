@@ -31,6 +31,9 @@
                     <BonusMalus_table v-else-if="procedure_name==='BonusMalus'" :procedure="procedure_name"></BonusMalus_table>
                     <carjackingrisklevel v-else-if="procedure_name==='CarJackingRiskLevel'" :procedure="procedure_name"></carjackingrisklevel>
                     <FilialArea v-else-if="procedure_name==='FilialInsuranceArea'" :procedure="procedure_name"></FilialArea>
+                    <TSUsagePeriod v-else-if="procedure_name==='TSUsagePeriod'" :procedure="procedure_name"></TSUsagePeriod>
+                    <InsurancePayoutCount v-else-if="procedure_name==='InsurancePayoutCount'" :procedure="procedure_name"></InsurancePayoutCount>
+                    <InsuranceProduct v-else-if="procedure_name==='InsuranceProduct_something'" :procedure="'InsuranceProduct'"></InsuranceProduct>
                 </v-flex>
             </v-layout>
     </v-scroll-y-reverse-transition>
@@ -48,6 +51,9 @@
     import BonusMalus_table from '../components/directory-tables/BonusMalus_table'
     import carjackingrisklevel from '../components/directory-tables/CarJackingRiskLevel_table'
     import FilialArea from '../components/directory-tables/FilialArea'
+    import TSUsagePeriod from '../components/directory-tables/TSUsagePeriod'
+    import InsurancePayoutCount from '../components/directory-tables/InsurancePayoutCount'
+    import InsuranceProduct from '../components/directory-tables/InsuranceProduct'
     export default {
         components: {
             directory_test,
@@ -55,7 +61,10 @@
             Filialtable,
             BonusMalus_table,
             carjackingrisklevel,
-            FilialArea
+            FilialArea,
+            TSUsagePeriod,
+            InsurancePayoutCount,
+            InsuranceProduct
         },
         name: "directory",
         data(){
@@ -88,6 +97,18 @@
                         name:`Территории страхования филиала`,
                         proced:`FilialInsuranceArea`
                     },
+                    {
+                        name:'Период использования ТС',
+                        proced:'TSUsagePeriod'
+                    },
+                    {
+                        name:'Кол-во выплат',
+                        proced:'InsurancePayoutCount'
+                    },
+                    {
+                        name:'Страховой продукт',
+                        proced:'InsuranceProduct_something'
+                    }
                 ]
             }
         },
