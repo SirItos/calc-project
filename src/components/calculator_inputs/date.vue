@@ -14,15 +14,16 @@
         <v-text-field
                 slot="activator"
                 :value="computedDateFormatted"
-                :label="field_header"
-                prepend-icon="mdi-calendar"
-                :rules="[v => !!v || ('Требуется заполнить поле')]"
+                :label="data_set.ElementCaption"
+                :prepend-icon="data_set.Icon"
+                :rules="(!data_set.Rule)?[v => !!v || (data_set.ErrorMsg||'Ошибка')]:[]"
                 readonly
+                @input="(val)=>{(!val)?this.changeValue(val):''}"
                 clearable
         ></v-text-field>
         <v-date-picker v-model="day" @input="()=>{
                 $refs.menu.save(day);
-                this.$emit('change_val',computedDateFormattedToSend)
+                this.changeValue(computedDateFormattedToSend)
             }"
                        color="info" ></v-date-picker>
 
@@ -30,16 +31,17 @@
 </template>
 
 <script>
-
+    import {mapActions} from 'vuex'
     export default {
-        name: "date_input",
+        name: "date",
         props:{
-            field_value:{},
-            field_header:{type:String,default:'Date input'},
+            data_set:{type:Object,default: ()=>{ return {} }},
+            calculation_id:{}
+
         },
         data(){
             return{
-                day: (this.field_value)||'',
+                day: (this.data_set.ElementValue)||'',
                 menu:false
             }
         },
@@ -54,13 +56,22 @@
             }
         },
         methods:{
+            ...mapActions({
+                editValue:'calculations/changeValue'
+            }),
             formatDate (date) {
                 if (!date) return null
                 const [year, month, day] = date.split('-')
                 return `${day}/${month}/${year}`
             },
+            changeValue(val){
+                this.editValue({
+                    id:Number(this.calculation_id),
+                    field_id:this.data_set.ElementID,
+                    value:val
+                })
+            }
         }
-
     }
 </script>
 

@@ -2,10 +2,12 @@
 
 // import {Local} from "../../main";
 import fields from "../../../static/form_fields"
+import HTTP from '../../plugins/axios'
 
 //state
 const state ={
     calculations_progress : [],
+    calculation_fiedls:[]
 }
 
 //getters
@@ -15,28 +17,51 @@ const getters = {
       return (state.calculations_progress.find(itm => itm.id === id))||[]
   },
   getSomeJsonData : state => {
-      console.log(1)
       return (state.calculations_progress.length) ? state.calculations_progress :null
+  },
+  getFields: state =>{
+      return state.calculation_fiedls
   }
 
 }
 
 //actions
 const actions ={
+
+    async getFormFields({commit,dispatch}, payload){
+        await HTTP.post('api/CalculationForm').then(response=>{
+            commit('setCalculationFields',response.data)
+        }).catch(e=>{
+            console.log(e.response)
+        })
+    },
+
      async createCalculation (context,payload){
         let obj = {
             'id' : payload.id,
             'insurant' : payload.insurant,
-            'fields': fields,
+            'fields': payload.fields,
             'status' : 3,
             'status_label':'Ошибка',
             'organization' : payload.organization,
             'responsible' : payload.responsible
         };
-        context.commit('setCalculationNew',obj);
+         context.commit('setCalculationNew',obj);
+    },
+    async changeValue({commit},payload){
+        commit('editValue',payload)
     },
     async clearCalculation (context,payload){
-      context.commit('slicecalculation',payload.id);
+      context.commit('removeCalculation',payload.id);
+    },
+    async addDriverAction({commit},payload){
+        commit('addDirever',payload)
+    },
+    async deleteDriverAction({commit},payload){
+        commit('deleteDriver',payload)
+    },
+    async editObjectAction({commit},payload){
+        commit('editTableObject',payload)
     },
     async sendCalculation(context,payload){
 
@@ -50,31 +75,37 @@ const actions ={
 //mutation
 
 const mutations  = {
-    setLocalCalculation(state,calc){
-        state.calculations_progress = calc;
-        // Local.set('localCalculations',calc,{ttl:60*60});
+    setCalculationFields(state,fields){
+        state.calculation_fiedls = fields
     },
     setCalculationNew(state,data){
-    state.calculations_progress.push(data);
-        // Local.set('localCalculations', state.calculations,{ttl:60*60});
+        state.calculations_progress.push(data);
     },
-    setFieldValue(state,data){
-      state.calculations_progress[data.index].fields[data.key].fields[data.field_index].value=data.val;
-    },
-    setDireverField(state,data){
-      state.calculations_progress[data.index].fields.drivers.table_items[data.field_index][data.key]=Number(data.val);
+    editValue(state,payload){
+        state.calculations_progress.find(itm => itm.id === payload.id).fields.find( field => field.ElementID === payload.field_id).ElementValue=payload.value
     },
     removeCalculation(state,id){
         state.calculations_progress.splice(state.calculations_progress.indexOf(state.calculations_progress.find(itm=>itm.id===id)),1);
     },
-    edtiInsuranse(state,data){
-        state.calculations_progress[state.calculations_progress.indexOf(state.calculations_progress.find(itm=>itm.id===data.id))].insurant=data.ins;
+    addDirever(state,payload){
+      if (state.calculations_progress.find( itm => itm.id === payload.id).drivers){
+          state.calculations_progress.find( itm => itm.id === payload.id).drivers.push(payload.object)
+      }else{
+          state.calculations_progress.find( itm => itm.id === payload.id).drivers=[]
+          state.calculations_progress.find( itm => itm.id === payload.id).drivers.push(payload.object)
+      }
     },
-    addDriver(state,data){
-        state.calculations_progress[data.index].fields.drivers.table_items.push(data.driver);
+    deleteDriver(state,payload){
+        let old_number = state.calculations_progress.find( itm => itm.id === payload.id).drivers[payload.index].object.match(/\d+$/)[0]
+        state.calculations_progress.find( itm => itm.id === payload.id).drivers.splice(payload.index,1)
+        state.calculations_progress.find( itm => itm.id === payload.id).drivers.forEach( itm => {
+            if ((Number(itm.object.match(/\d+/)[0])-1) > 0 && (Number(itm.object.match(/\d+/)[0])>old_number)) {
+               itm.object = itm.object.replace(itm.object.match(/\d+/)[0], Number(itm.object.match(/\d+/)[0]) - 1)
+            }
+        })
     },
-    deleteDriver(state,data){
-        state.calculations_progress[data.index].fields.drivers.table_items.splice(data.driver_index,1);
+    editTableObject(state,payload){
+      state.calculations_progress.find( itm => itm.id === payload.id).drivers[payload.index][payload.key]=payload.value
     },
     clearCalculations(state){
         state.calculations_progress=[];

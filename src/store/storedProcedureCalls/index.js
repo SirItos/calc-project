@@ -119,7 +119,7 @@ const actions={
                 data:response.data
             })
         }).catch(e=>{
-            context.dispatch('ErrorAuth',e.response.status)
+            dispatch('ErrorAuth',e.response.status)
         })
     },
     async getListGroupSelect (context, payload){

@@ -1,6 +1,6 @@
 <template>
     <v-flex :class="comp_class">
-            <text_input v-if="data_type==='nvarchar'" :field_header="data_header" :field_value="data_value[data_header]" @change_val="newVal" ></text_input>
+            <text_input v-if="data_type==='nvarchar' || data_type==='int'" :field_header="data_header" :field_value="data_value[data_header]" @change_val="newVal" ></text_input>
             <date_input v-if="data_type==='datetime'" :field_header="data_header" :field_value="data_value[data_header]" @change_val="newVal"></date_input>
     </v-flex>
 </template>
