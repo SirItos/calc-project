@@ -1,7 +1,7 @@
 <template>
     <v-layout wrap row class="pt-2 pb-5" >
         <v-flex md12 sm12 xs12 class="subheading">{{field_set[0].GroupName}}</v-flex>
-        <v-flex md6 sm6 xs12 v-for="(item,index) in sortFields" :key="index" :class="paddingClass(index)" v-if="item.ElementType!=='table\\column' && item.ElementType!=='table'">
+        <v-flex md4 sm6 xs12 v-for="(item,index) in sortFields" :key="index" class="px-2" v-if="item.ElementType!=='table\\column' && item.ElementType!=='table'">
             <text_input v-if="item.ElementType==='text'||item.ElementType==='money'||item.ElementType==='number'"
                 :data_set="item"
                 :calculation_id="calculation_id"

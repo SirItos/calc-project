@@ -1,5 +1,5 @@
 <template>
-    <v-flex md6 sm6 xs12>
+    <v-flex md8 sm12 xs12>
         <v-data-table
                 class="elevation-1 mt-3"
                 :headers="getHeaders"
@@ -27,14 +27,18 @@
                     <v-edit-dialog
                             :return-value.sync="props.item[index]"
                             lazy
+
                             @save="save(props.item[index],props.index,index)"
                     >
+                        <!--    :rules = "[ v=> (Number(v) >= 18)||'Водитель должен быть страше 18']"-->
                         {{ (props.item[index]!=="")?props.item[index]:0 }}
                         <v-text-field
+                                class="pb-2"
                                 slot="input"
                                 v-model="props.item[index]"
                                 label=""
                                 maxlength="2"
+
                                 clearable
                                 single-line
                         ></v-text-field>
@@ -91,6 +95,9 @@
                 return result
             }
         },
+        created(){
+            this.items=this.items=this.getCalculationById(this.calculation_id).drivers || []
+        },
         methods:{
             ...mapActions({
                 addDriver:'calculations/addDriverAction',
@@ -118,19 +125,23 @@
                 this.items=this.getCalculationById(this.calculation_id).drivers
             },
             save(value,index,key){
-                this.edittableObject(
-                    {
-                        value:value,
-                        index:index,
-                        key:key,
-                        id:this.calculation_id
-                    }
-                )
+                if (Number(value)>=18) {
+                    this.edittableObject(
+                        {
+                            value: value,
+                            index: index,
+                            key: key,
+                            id: this.calculation_id
+                        }
+                    )
+                }
             }
         }
     }
 </script>
 
-<style scoped>
-
+<style >
+    .error--text .v-menu__activator a{
+        color:#ff5252 !important;
+    }
 </style>

@@ -4,11 +4,11 @@
         <v-container fill-height fluid>
             <v-layout row wrap fill-width class="mx-4">
                 <v-flex md12>
-                    <v-btn outline color="info"  class="mx-0 text-uppercase mb-4" to="/">  <v-icon left >mdi-arrow-left</v-icon> Главная</v-btn>
+                    <v-btn outline color="info"  class="mx-0 text-uppercase mb-4" @click="back_go()">  <v-icon left >mdi-arrow-left</v-icon> Главная</v-btn>
                 </v-flex>
 
                 <!--Страхователь-->
-                <v-flex md6 sm6 xs6 class="custom-flex align-center" >
+                <v-flex md5 sm6 xs6 class="custom-flex align-center" >
 
                     <v-autocomplete
                         slot="activator"
@@ -25,7 +25,6 @@
                         :label="getInsurInputData.ElementCaption"
                         :prepend-icon="getInsurInputData.Icon"
                         search-input
-                        clearable
                         :rules="(getInsurInputData.ErrorMsg)?[v => !!v || getInsurInputData.ErrorMsg]:[]"
                         @input="val=>{ this.changeInsurData(val)}"
                     >
@@ -37,11 +36,26 @@
                             </v-list-tile>
                         </template>
                     </v-autocomplete>
+                    <v-tooltip right>
+                        <v-btn
+                                class="mx-3"
+                                slot="activator"
+                                icon
+                                flat
+                                ripple
+                                label="button"
+                                @click="confirmDeleeting()"
+                        >
+                            <v-icon size="2em" >mdi-close</v-icon>
+                        </v-btn>
+                        <span>Очистить форму</span>
+                    </v-tooltip>
                 </v-flex>
                 <v-spacer></v-spacer>
                  <div class="custom-flex align-center acord-icon-btn" :class="(acord)?'acord-icon-btn_active':'' ">
                      <v-tooltip left>
                             <v-btn
+                                    class="mx-3"
                                     slot="activator"
                                     icon
                                     flat
@@ -68,10 +82,54 @@
                 <v-fade-transition tag="v-flex" class="md12 sm12 xs12" group>
                     <!--<v-flex class="py-2 " md12 sm12 xs12  >-->
                             <calc_input_groups :field_set="item" :calculation_id="fields.id" v-if="fields.fields" v-for="(item,index) in jsonFields" :key="index"></calc_input_groups>
+                    <v-flex md12 sm12 justify-center class="py-5" key='btn_calc'  v-if="fields.fields" >
+                        <v-btn
+                                large
+                                block
+                                color="primary"
+                                @click="calc()"
+                        >Сохранить</v-btn>
+                    </v-flex>
                     <!--</v-flex>-->
                 </v-fade-transition>
 
 
+
+
+
+                <v-dialog
+                        v-model="dialog"
+                        max-width="400"
+                        persistent
+                >
+                    <v-card>
+                        <v-card-title class="headline">
+                            Предупреждение!
+                        </v-card-title>
+                        <v-card-text>
+                            В случае удаления "Страхователя" все данные заполенные в форме рассчета будут утеряны.
+                            Вы уверены что хотите удалить "Страхователя"?
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                                    color="grey darken-1"
+                                    flat
+                                    @click="()=>{this.dialog=false;}"
+                            >
+                                Нет
+                            </v-btn>
+                            <v-btn
+                                    color="info"
+                                    flat
+                                    @click="()=>{this.dialog=false; this.deleteCalculation()}"
+                            >
+                                Да
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+
+                </v-dialog>
 
 
             </v-layout>
@@ -101,7 +159,8 @@
               show_tooltip:true,
               acord:false,
               valid:false,
-              fields:[]
+              fields:[],
+              dialog:false
           }
         },
         computed:{
@@ -138,9 +197,10 @@
                 this.fields = this.getFields
             },
             changeInsurData(val){
-                (val)?this.createCalculation(val):this.deleteCalculation()
+                (val)?this.createCalculation(val):  this.confirmDeleeting()
             },
             async createCalculation(val){
+                this.ins=val
                 this.$_.findWhere(this.fields,{ElementID:'insured'}).ElementValue=val
                 let temp_id=this.createTempId()
                 await this.createCalculationStore({
@@ -157,10 +217,21 @@
                 return Number(this.getCalculations.length)*(-1)-1
             },
             deleteCalculation(){
+                this.ins= undefined
                 this.clearCalculation(this.fields.id)
                 this.fields = this.getFields
                 console.log('deleting')
+            },
+            confirmDeleeting(){
+                this.dialog=true
+            },
+            back_go(){
+                this.$root.$router.back()
+            },
+            calc(){
+                console.log('Отправляем данные на сервер')
             }
+
         },
         created(){
             this.$root.$emit('change_title', 'Калькулятор')
@@ -168,6 +239,7 @@
 
 
         },
+
 
 
     }

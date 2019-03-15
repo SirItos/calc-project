@@ -3,35 +3,35 @@
 
         <div class="subheading px-3"> Добавить страхователя</div>
         <v-layout class="px-4" wrap row>
-            <v-flex md6 class="px-2">
+            <v-flex md4 class="px-2">
                 <v-text-field
                     type="text"
                     label="Наименование"
                     clearable
                 ></v-text-field>
             </v-flex>
-            <v-flex md6 class="px-2">
+            <v-flex md4 class="px-2">
                 <v-text-field
                         type="text"
                         label="Поле 1"
                         clearable
                 ></v-text-field>
             </v-flex>
-            <v-flex md6 class="px-2">
+            <v-flex md4 class="px-2">
                 <v-text-field
                         type="text"
                         label="Поле 2"
                         clearable
                 ></v-text-field>
             </v-flex>
-            <v-flex md6 class="px-2">
+            <v-flex md4 class="px-2">
                 <v-text-field
                         type="text"
                         label="Поле 3"
                         clearable
                 ></v-text-field>
             </v-flex>
-            <v-flex class="custom-flex justify-end mt-4">
+            <v-flex md12 class="custom-flex justify-end mt-4">
                  <v-btn color="info sm_btn"  outline>
                     <v-icon class="pr-2">mdi-undo-variant</v-icon>
                      Отменить
