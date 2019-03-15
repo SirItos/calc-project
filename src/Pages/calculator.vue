@@ -4,7 +4,7 @@
         <v-container fill-height fluid>
             <v-layout row wrap fill-width class="mx-4">
                 <v-flex md12>
-                    <v-btn outline color="info"  class="mx-0 text-uppercase mb-4" @click="back_go()">  <v-icon left >mdi-arrow-left</v-icon> Главная</v-btn>
+                    <v-btn outline color="info"  class="mx-0 text-uppercase mb-4" @click="back_go()">  <v-icon left >mdi-arrow-left</v-icon> Назад</v-btn>
                 </v-flex>
 
                 <!--Страхователь-->
@@ -149,6 +149,9 @@
     import {mapGetters,mapActions,mapMutations} from "vuex"
     export default {
         name: "calculator",
+        props:{
+            id:{type:String,default:''}
+        },
         components:{
             customer_add,
             calc_input_groups
@@ -195,9 +198,15 @@
                     await this.getFormFields()
                 }
                 this.fields = this.getFields
+                if (this.id!=='new')
+                    this.setData()
+            },
+            setData(){
+                this.ins=this.getCalculationById(Number(this.id)).insurant
+                this.fields=this.getCalculationById(Number(this.id))
             },
             changeInsurData(val){
-                (val)?this.createCalculation(val):  this.confirmDeleeting()
+                (val && this.ins)?this.createCalculation(val):  this.confirmDeleeting()
             },
             async createCalculation(val){
                 this.ins=val
@@ -221,6 +230,8 @@
                 this.clearCalculation(this.fields.id)
                 this.fields = this.getFields
                 console.log('deleting')
+                if (this.id!=='new')
+                    this.$root.$router.push('/')
             },
             confirmDeleeting(){
                 this.dialog=true
@@ -236,8 +247,6 @@
         created(){
             this.$root.$emit('change_title', 'Калькулятор')
             this.getFieldsScheme()
-
-
         },
 
 

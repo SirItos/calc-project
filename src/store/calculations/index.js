@@ -41,7 +41,8 @@ const actions ={
             'id' : payload.id,
             'insurant' : payload.insurant,
             'fields': payload.fields,
-            'status' : 3,
+            'object':'Объект',
+            'status' : 2,
             'status_label':'Ошибка',
             'organization' : payload.organization,
             'responsible' : payload.responsible

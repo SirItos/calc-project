@@ -1,7 +1,10 @@
 <template>
     <v-container class="ma-0" style="max-width:100%!important">
-        <v-layout row justify-center>
-            <v-flex md12 sm12  class="pl-2 pr-2" style="min-height: 68px;">
+        <v-layout row justify-center wrap>
+            <v-flex md12>
+                <v-btn outline color="info"  class="mx-0 text-uppercase mb-4" to="/"">  <v-icon left >mdi-arrow-left</v-icon> Главная</v-btn>
+            </v-flex>
+            <v-flex md12 sm12  style="min-height: 68px;">
                 <v-card>
                     <v-card-title>
                         <v-spacer></v-spacer>
@@ -13,7 +16,6 @@
                         v-model="search"
                         clearable
                     >
-
                     </v-text-field>
                     </v-card-title>
 
@@ -25,11 +27,9 @@
                 >
                     <template slot="items" slot-scope="props">
                         <tr @click="go_to_object(props.item.id)"  class="as-tr" >
-                        <td class="text-md-center text-sm-center" style="display:flex;align-items: center; justify-content: center; min-height:48px; padding-left:20px;padding-right:0">
-                            <v-icon size="0.8em" :color="set_icon_color(props.item.status)">mdi-checkbox-blank-circle</v-icon>
+                        <td class="text-md-center text-sm-center">{{ props.item.insurant }} <br>
+                            {{ props.item.object }}
                         </td>
-                        <td class="text-md-center text-sm-center">{{ props.item.insurant }}</td>
-                        <td class="text-md-center text-sm-center">Название ТС</td>
                         <td class="text-md-center text-sm-center">0</td>
                         <td class="text-md-center text-sm-center">0</td>
                         <td class="text-md-center text-sm-center">0</td>
@@ -63,17 +63,10 @@
         data:()=>({
             headers: [
                 {
-                    text: '',
-                    align: 'center',
-                    value: 'status_icon',
-                    sortable:false,
-                },
-                {
-                    text: 'Страхователь',
+                    text: 'Страхователь/Объект',
                     align: 'center',
                     value: 'insurant'
                 },
-                { text: 'ТС', value: 'ts',     align: 'center'},
                 { text: 'Лимит КАСКО', value: 'klimit',     align: 'center' },
                 { text: 'Премия КАСКО', value: 'kaward' ,     align: 'center'},
                 { text: 'Лимит АГО', value: 'alimit',     align: 'center' },
@@ -81,15 +74,17 @@
                 { text: 'Лимит НС', value: 'nslimit',     align: 'center' },
                 { text: 'Премия НС', value: 'nsaward' ,     align: 'center'},
                 { text: 'Статус', value: 'status_label' ,     align: 'center'},
+
             ],
             search:''
         }),
         computed:{
             ...mapGetters({
-                get_list:'calculations/getCalculations'
+                get_list_progress:'calculations/getCalculations',
+                get_list_server:'calculations_server/getCalculations_server'
             }) ,
             list(){
-                return this.get_list;
+                return this.$_.union(this.get_list_progress,this.get_list_server);
             }
         },
         created(){
@@ -97,16 +92,19 @@
         },
         methods:{
             go_to_object(id){
-                this.$router.push({ name: 'object', params: { id: id }});
+                this.$router.push({ name: 'object', params: { id: id.toString() }});
 
             },
-            status_class(status){
-                return(status==="Ожидает подтверждения")?"orange-lighten-1":"";
+            // status_class(status){
+            //     return(status==="Ожидает подтверждения")?"orange-lighten-1":"";
+            // },
+            // set_icon_color(status){
+            //     status=(status===0)?"info":(status===1)?"success":(status===2)?"warning":"error";
+            //     return status;
+            // },
+            back_go(){
+                this.$root.$router.back()
             },
-            set_icon_color(status){
-                status=(status===0)?"info":(status===1)?"success":(status===2)?"warning":"error";
-                return status;
-            }
         }
     }
 </script>

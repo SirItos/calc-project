@@ -3,7 +3,9 @@
         <v-layout row wrap>
             <v-flex>
                 <v-layout row wrap align-center style="border-bottom:1px solid rgba(0,0,0,.2)">
-
+                    <v-flex md12>
+                        <v-btn outline color="info"  class="mx-0 text-uppercase mb-4" @click="back_go()">  <v-icon left >mdi-arrow-left</v-icon> Назад</v-btn>
+                    </v-flex>
                     <v-flex md4 sm4 class="title">Расчет № {{current_object.id}}</v-flex>
                     <v-flex md4 sm4 class="title">Стаутс: {{current_object.status_label}}</v-flex>
                     <v-spacer></v-spacer>
@@ -30,7 +32,7 @@
                                 label="TC"
                                 type="text"
                                 readonly
-                                :value="(current_object.ts)?mark_model:''"
+                                :value="(current_object.object)||''"
                                 :prepend-icon="'mdi-car'"
                         ></v-text-field>
                     </v-flex>
@@ -42,11 +44,7 @@
                                 hide-actions
                         >
                             <template slot="items" slot-scope="props">
-
-                                <td class="text-md-center text-sm-center">{{driver_number(props.item)}}</td>
-                                <td class="text-md-center text-sm-center">{{props.item.exp}}</td>
-                                <td class="text-md-center text-sm-center">{{props.item.age}}</td>
-
+                                <td class="text-md-center text-sm-center" v-for="(item,index) in props.item" :key="index">{{item}}</td>
                             </template>
 
 
@@ -103,14 +101,14 @@
     export default {
         name: "history_object",
         props:{
-            id:{type:Number,default:0}
+            id:{type:String,default:'0'}
             },
         data:()=>({
             current_object:{},
             headers: [
                 {
                     text: 'Водители',
-                    align: 'left',
+                    align: 'center',
                     sortable: false,
                     value: 'start'
                 },
@@ -124,21 +122,22 @@
                 getCalculationById: "calculations/getCalculationById"
             }),
             mark_model(){
-                let model=(this.current_object.ts.model)||'';
-                let mark=(this.current_object.ts.mark)||'';
-                return model+' '+mark;
+
             },
         },
         methods:{
             driver_number(item){
                 return "Водитель "+(this.current_object.drivers.indexOf(item)+1)
             },
+            back_go(){
+                this.$root.$router.back()
+            }
 
 
         },
         created(){
             let self=this;
-            this.current_object=this.getCalculationById(this.id)
+            this.current_object=this.getCalculationById(Number(this.id))
         }
     }
 </script>
