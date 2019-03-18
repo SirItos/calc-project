@@ -53,7 +53,7 @@ const actions ={
         commit('editValue',payload)
     },
     async clearCalculation (context,payload){
-      context.commit('removeCalculation',payload.id);
+      context.commit('removeCalculation',payload);
     },
     async addDriverAction({commit},payload){
         commit('addDirever',payload)
@@ -67,8 +67,8 @@ const actions ={
     async sendCalculation(context,payload){
 
     },
-    async clear(context){
-         context.commit('clearCalculations');
+    async shiftItem(context){
+         context.commit('shiftCalculation');
     }
 }
 
@@ -86,7 +86,7 @@ const mutations  = {
         state.calculations_progress.find(itm => itm.id === payload.id).fields.find( field => field.ElementID === payload.field_id).ElementValue=payload.value
     },
     removeCalculation(state,id){
-        state.calculations_progress.splice(state.calculations_progress.indexOf(state.calculations_progress.find(itm=>itm.id===id)),1);
+       state.calculations_progress.splice(state.calculations_progress.indexOf(state.calculations_progress.find(itm=>itm.id===id)),1);
     },
     addDirever(state,payload){
       if (state.calculations_progress.find( itm => itm.id === payload.id).drivers){
@@ -108,8 +108,8 @@ const mutations  = {
     editTableObject(state,payload){
       state.calculations_progress.find( itm => itm.id === payload.id).drivers[payload.index][payload.key]=payload.value
     },
-    clearCalculations(state){
-        state.calculations_progress=[];
+    shiftCalculation(state){
+        state.calculations_progress.shift();
     }
 
 

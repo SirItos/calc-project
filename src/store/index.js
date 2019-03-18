@@ -37,7 +37,11 @@ const vuexLocalCalculations = new VuexPersistence({
     }),
      filter: (mutation) =>(mutation.type === "calculations/setCalculationNew" ||
                            mutation.type === "calculations/removeCalculation" ||
-                           mutation.type === "calculations/editValue"
+                           mutation.type === "calculations/editValue" ||
+                           mutation.type === "calculations/addDirever" ||
+                           mutation.type === "calculations/deleteDriver" ||
+                           mutation.type === "calculations/editTableObject" ||
+                           mutation.type === "calculations/shiftCalculation"
      ),
     modules:['calculations']
 })

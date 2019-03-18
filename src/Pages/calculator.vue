@@ -13,11 +13,16 @@
                     <v-autocomplete
                         slot="activator"
                         autocomplete
+                        ref="maininput"
                         v-model="ins"
                         :items="[
                             {
                                 value:1,
                                 label:'Test_1'
+                            },
+                            {
+                                value:2,
+                                label:'Test_2'
                             }
                         ]"
                         item-text="label"
@@ -43,6 +48,7 @@
                                 icon
                                 flat
                                 ripple
+                                :disabled="(!ins)"
                                 label="button"
                                 @click="confirmDeleeting()"
                         >
@@ -96,9 +102,8 @@
 
 
 
-
                 <v-dialog
-                        v-model="dialog"
+                        v-model="dialog.active"
                         max-width="400"
                         persistent
                 >
@@ -107,22 +112,21 @@
                             Предупреждение!
                         </v-card-title>
                         <v-card-text>
-                            В случае удаления "Страхователя" все данные заполенные в форме рассчета будут утеряны.
-                            Вы уверены что хотите удалить "Страхователя"?
+                            {{dialog.text}}
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn
                                     color="grey darken-1"
                                     flat
-                                    @click="()=>{this.dialog=false;}"
+                                    @click="()=>{this.dialog.active=false;}"
                             >
                                 Нет
                             </v-btn>
                             <v-btn
                                     color="info"
                                     flat
-                                    @click="()=>{this.dialog=false; this.deleteCalculation()}"
+                                    @click="()=>{this.dialog.active=false; (this.dialog.method)?this.deleteCalculation():createCalculation(dialog.tmpVal,true)}"
                             >
                                 Да
                             </v-btn>
@@ -163,7 +167,12 @@
               acord:false,
               valid:false,
               fields:[],
-              dialog:false
+              dialog:{
+                  active:false,
+                  text:'',
+                  method: false,
+                  tmpVal:''
+              }
           }
         },
         computed:{
@@ -191,7 +200,8 @@
             ...mapActions({
                 getFormFields: 'calculations/getFormFields',
                 createCalculationStore:'calculations/createCalculation',
-                clearCalculation:'calculations/clearCalculation'
+                clearCalculation:'calculations/clearCalculation',
+                shiftCalculation:'calculations/shiftItem'
             }),
             async getFieldsScheme(){
                 if (!this.getFields.length) {
@@ -206,9 +216,10 @@
                 this.fields=this.getCalculationById(Number(this.id))
             },
             changeInsurData(val){
-                (val && this.ins)?this.createCalculation(val):  this.confirmDeleeting()
+                (val && this.ins)?this.check_new_calc(val):  this.confirmDeleeting()
             },
-            async createCalculation(val){
+            async createCalculation(val,mode=false){
+
                 this.ins=val
                 this.$_.findWhere(this.fields,{ElementID:'insured'}).ElementValue=val
                 let temp_id=this.createTempId()
@@ -220,8 +231,20 @@
                     fields:this.fields
                 })
                this.fields=this.getCalculationById(temp_id)
+                if (mode)
+                    await this.shiftItem()
             },
+            check_new_calc(val){
+                if (this.getCalculations.length >4) {
+                    this.ins=''
+                    this.dialog.active = true
+                    this.dialog.tmpVal = val
+                    this.dialog.text = "У Вас больше 5 незаконченных рассчетов,\n при попытке начать новый будут утеряны данные. Продолжить?"
+                }else{
+                    this.createCalculation(val)
+                }
 
+            },
             createTempId(){
                 return Number(this.getCalculations.length)*(-1)-1
             },
@@ -234,13 +257,19 @@
                     this.$root.$router.push('/')
             },
             confirmDeleeting(){
-                this.dialog=true
+                this.dialog.active=true
+                this.dialog.text=" В случае удаления \"Страхователя\" все данные заполенные в форме рассчета будут утеряны.\n" +
+                    "                            Вы уверены что хотите удалить \"Страхователя\"?"
+                this.dialog.method=true
             },
             back_go(){
                 this.$root.$router.back()
             },
             calc(){
                 console.log('Отправляем данные на сервер')
+            },
+            async shiftItem(){
+                 await this.shiftCalculation()
             }
 
         },
