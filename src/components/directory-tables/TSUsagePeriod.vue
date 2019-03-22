@@ -25,11 +25,13 @@
                         </v-text-field>
                     </v-card-title>
                     <v-data-table
-                            :headers="headers_set"
-                            :items="list"
+                            :headers="headers"
+                            :items="((getDickData(procedure)))|| []"
                             :pagination.sync="pagination"
                             class="elevation-1"
-                            :search="search"
+                            :rows-per-page-items="[5,10,25]"
+                            :total-items="(getTotal(procedure)) || 0"
+
                     >
                         <!--HEADER OF TABLE-->
                         <template slot="headers" slot-scope="props">
@@ -153,7 +155,7 @@
     import {mapGetters,mapActions,mapMutations} from 'vuex'
     import c_modal from './add_edit_dialog'
     export default {
-        name: "t-s-usage-period",
+        name: "insurance-area_table",
         components:{
             c_modal
         },
@@ -163,9 +165,11 @@
         data:()=>({
             array_data:[],
             headers:[],
-            list:[],
-            search:'',
-            pagination:{},
+            search:null,
+            pagination:{
+                rowsPerPage:5
+            },
+            totalNumber:0,
             loading:true,
             modal:false,
             edit_modal:false,
@@ -186,38 +190,29 @@
             ...mapGetters({
                 getDickData:'storedProcedure/getStoreList',
                 getItemStatus:'storedProcedure/getItemStatus',
-                getEmpty:'storedProcedure/getEmpty'
-            }),
-            //Составление массива с именами колонок в таблице
-            headers_set(){
-                let self = this;
-                let set=[]
-                if (this.list.length) {
-                    Object.keys(this.list[0]).forEach(item => {
-                        if (self.check(item)) {
-                            set.push({text: item, value: item, align: 'center',sortable:true})
-                        }
-                    })
-                    this.pagination = Object.assign({},this.pagination,{
-                        sortBy:set[0].value,
-                        rowsPerPage:10
-                    })
-                    set.push({text: '', value: this.headers[0], align: 'center',sortable: false})
-                }
-                return set
-            }
+                getEmpty:'storedProcedure/getEmpty',
+                getTotal:'storedProcedure/getTotalNumber'
+            })
         },
         //Изминяем заголовок страницы при создание компонента
         created(){
-            this.$root.$emit('change_title', 'Территории страхования')
+            this.$root.$emit('change_title', 'Периоды использования ТС')
 
         },
         //После рендеринга страницы запускаем метод для получения данных с сервера
-        mounted(){
-            this.$nextTick(async function(){
-                this.setDataFromServer()
-
-            })
+        // mounted(){
+        //     this.$nextTick(async function(){
+        //         this.setDataFromServer()
+        //
+        //     })
+        // },
+        watch:{
+            pagination:{
+                handler:function (){
+                    this.setDataFromServer()
+                },
+                deep:true
+            }
         },
         methods: {
             ...mapActions({
@@ -231,12 +226,14 @@
             //вызываемт vuex action
             async setDataFromServer() {
                 //Вызов action для получения данных
+                this.loading=true
                 await this.getList({
-                    procedure:this.procedure
+                    procedure:this.procedure,
+                    pagination:this.pagination
+
                 })
-                //геттером записываем в поле date полученные данные
-                //если их нет то присваиваем пустой массив.
-                this.list = ((this.getDickData(this.procedure)))|| []
+                //Собираем заголовки столбцов
+                this.headers=this.headers_set()
                 //Проверяем статус ответа. Если он не пустой => ошибка.
                 if (this.getItemStatus(this.procedure)) {
                     //Выводим snackbar с текстом ошибки
@@ -254,9 +251,9 @@
                 this.confirm.preload=true
                 let payload={
                     st_method:this.procedure,
-                    index:this.list.indexOf(item),
+                    index:this.getDickData(this.procedure).indexOf(item),
                     params_arr:{
-                        id:item.TSUsagePeriod_ID,
+                        id:item[this.procedure + '_ID'],
                         RecordTimestamp:item.RecordTimestamp
                     }
                 }
@@ -269,8 +266,6 @@
                     color: (this.getItemStatus(this.procedure)) ?'error' :'warning',
                     text: (this.getItemStatus(this.procedure)) ? this.getItemStatus(this.procedure) : 'Элемент '+this.confirm.text+' удален.'
                 })
-
-
             },
             //Получаем пустой набор полей если в пришедших данных изначально ничего нет.
             // Необходимо для создания полей ввода информации в модальном окне..... лучше заменить на статичный набор данных
@@ -293,7 +288,7 @@
             //Открытие модального окна, с передачей данных о структуре формы внутрь как props
             async open_modal(open,mode=false,fields=null){
                 //Если таблица не пустая и у нас есть откуда взять струтуру полей
-                if (this.list.length) {
+                if (this.getDickData(this.procedure).length) {
                     this.prep_field_set = ((fields) ? this.clone(fields) : this.create_set())
                 }else{
                     await this.getEmptyFields()
@@ -312,10 +307,10 @@
             //Создание пустого набора данных на основание полей таблицы
             create_set(){
                 let result={}
-                Object.keys(this.list[0]).forEach(item => {
+                Object.keys(this.getDickData(this.procedure)[0]).forEach(item => {
                     this.$set(result,item,"")
                 })
-                this.$set(result,'type',this.list[0].type)
+                this.$set(result,'type',this.getDickData(this.procedure)[0].type)
                 return result
             },
             //Закрытие модального окна
@@ -327,10 +322,13 @@
                 }
             },
             //Вывод всплывающего окна с информацией
-            snack_show(obj){
+            async snack_show(obj){
+                await this.setDataFromServer()
+                this.headers=this.headers_set()
                 this.$set(this.snackbar,'color',obj.color)
                 this.$set(this.snackbar,'text',obj.text)
                 this.$set(this.snackbar,'mode',true)
+
             },
             //Модальное окно подтверждения действия на удаление
             confirm_delete(item){
@@ -369,7 +367,20 @@
                 }
                 return this.$moment(strDate,'YYYY-MM-DD').format('DD.MM.YYYY');
             },
-
+            //Составление массива с именами колонок в таблице
+            headers_set(){
+                let self = this;
+                let set=[]
+                if (this.getDickData(this.procedure).length) {
+                    Object.keys(this.getDickData(this.procedure)[0]).forEach(item => {
+                        if (self.check(item)) {
+                            set.push({text: item, value: item, align: 'center',sortable:true})
+                        }
+                    })
+                    set.push({text: '', value: '', align: 'center',sortable: false})
+                }
+                return set
+            }
         }
     }
 </script>

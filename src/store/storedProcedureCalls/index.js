@@ -10,7 +10,7 @@ const state={
 
 const getters={
     getStoreList: state => name => {
-        return state[name]
+        return (state[name])?state[name].result:[]
     },
     getOneRecod: state => (id,name) => {
         return state[name].find(item => item.id===id)
@@ -23,6 +23,9 @@ const getters={
     },
     getEnumList: state => name=>{
         return state.enumList[name]
+    },
+    getTotalNumber: state => name => {
+        return (state[name])?state[name].total:-1
     }
 }
 //getListStoredPorcedur
@@ -31,9 +34,10 @@ const actions={
     //Получить список записей для таблицы
     async getList (context, payload){
         await HTTP.post('api/getListStoredPorcedur',{
-            st_method:payload.procedure
+            st_method:payload.procedure,
+            pagination:payload.pagination
         }).then(response=>{
-            response.data.forEach(item =>{
+            response.data.result.forEach(item =>{
                 item.status=response.status
             })
             let commitData={
@@ -76,8 +80,6 @@ const actions={
                     msg:null
                 })
                 commit('addItem',{name:payload.st_method,data:result})
-        }).catch(e=>{
-            context.dispatch('ErrorAuth',e.response.status)
         })
     },
     //редактировать элемент (если в элементе нет select'ов или любые его поля не являются массивами/объектами)
@@ -126,7 +128,8 @@ const actions={
         await HTTP.post('api/getListSelectDataStoredPorcedur',{
             st_method:payload.procedure,
             grouping:payload.grouping,
-            fields_to_merge:payload.fields_to_merge
+            fields_to_merge:payload.fields_to_merge,
+            pagination:payload.pagination
         }).then(response=>{
             response.data.forEach(item =>{
                 item.status=response.status
@@ -238,25 +241,29 @@ const actions={
 
 const mutations  = {
     setDick(state,commitData) {
-        state[commitData.name] = commitData.data
+        state[commitData.name] = {
+            result:commitData.data.result,
+            total:commitData.data.totalNumber
+    }
 
     },
     setStatus(state,commitData){
        state[commitData.name][commitData.id].status=commitData.value
     },
     deleteItem(state,commitData){
-        state[commitData.name].splice(commitData.id,1)
+        state[commitData.name].result.splice(commitData.id,1)
     },
     addItem(state,commitData){
-         state[commitData.name].push(commitData.data)
+         // state[commitData.name].result.push(commitData.data)
+         state[commitData.name].total++
     },
     editState(state,commitData){
         let com_id=commitData.data[commitData.name+'_ID']
-        let state_index= state[commitData.name].indexOf(state[commitData.name].find( (item,index) => {
+        let state_index= state[commitData.name].result.indexOf(state[commitData.name].result.find( (item,index) => {
             return item[commitData.name+'_ID']===com_id
         }))
-        for (let item_key in state[commitData.name][state_index]){
-            state[commitData.name][state_index][item_key]=commitData.data[item_key]
+        for (let item_key in state[commitData.name].result[state_index]){
+            state[commitData.name].result[state_index][item_key]=commitData.data[item_key]
         }
     },
     addEmptyFields(state,commitData){

@@ -153,13 +153,13 @@
                     align: 'center',
                     value: 'insurant'
                 },
-                { text: 'Лимит КАСКО', value: 'klimit',     align: 'center' },
-                { text: 'Премия КАСКО', value: 'kaward' ,     align: 'center'},
-                { text: 'Лимит АГО', value: 'alimit',     align: 'center' },
-                { text: 'Премия АГО', value: 'aaward' ,     align: 'center'},
-                { text: 'Лимит НС', value: 'nslimit',     align: 'center' },
-                { text: 'Премия НС', value: 'nsaward' ,     align: 'center'},
-                { text: 'Статус', value: 'status_label' ,     align: 'center'},
+                { text: 'Лимит КАСКО', value: 'klimit', align: 'center' },
+                { text: 'Премия КАСКО', value: 'kaward' , align: 'center'},
+                { text: 'Лимит АГО', value: 'alimit', align: 'center' },
+                { text: 'Премия АГО', value: 'aaward', align: 'center'},
+                { text: 'Лимит НС', value: 'nslimit', align: 'center' },
+                { text: 'Премия НС', value: 'nsaward', align: 'center'},
+                { text: 'Статус', value: 'status_label', align: 'center'},
 
             ],
             search:'',
@@ -188,6 +188,7 @@
         created(){
             this.$root.$emit('change_title', 'История взаиморасчетов')
         },
+
         methods:{
             ...mapActions({
                 removeCalculations :'calculations/clearCalculation'
@@ -206,7 +207,6 @@
                 }
             },
             changeSort (column) {
-                console.log(column)
                 if (this.pagination.sortBy === column) {
                     this.pagination.descending = !this.pagination.descending
                 } else {

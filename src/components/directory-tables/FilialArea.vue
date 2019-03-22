@@ -25,11 +25,12 @@
                         </v-text-field>
                     </v-card-title>
                     <v-data-table
-                            :headers="headers_set"
-                            :items="list"
+                            :headers="headers"
+                            :items="(getDickData(procedure))|| []"
                             :pagination.sync="pagination"
                             class="elevation-1"
-                            :search="search"
+                            :rows-per-page-items="[5,10,25]"
+                            :total-items="(getTotal(procedure)) || 0"
                     >
                         <!--HEADER OF TABLE-->
                         <template slot="headers" slot-scope="props">
@@ -165,9 +166,11 @@
         data:()=>({
             array_data:[],
             headers:[],
-            list:[],
-            search:'',
-            pagination:{},
+            search:null,
+            pagination:{
+                rowsPerPage:5
+            },
+            totalNumber:0,
             loading:true,
             modal:false,
             edit_modal:false,
@@ -187,35 +190,28 @@
         created(){
             this.$root.$emit('change_title', 'Территории страхования филиалов')
         },
-        mounted(){
-            this.$nextTick(async function(){
-                this.setDataFromServer()
-
-            })
+        // mounted(){
+        //     this.$nextTick(async function(){
+        //         this.setDataFromServer()
+        //
+        //     })
+        // },
+        watch:{
+            pagination:{
+                handler:function (){
+                    this.setDataFromServer()
+                },
+                deep:true
+            }
         },
         computed:{
             ...mapGetters({
                 getDickData:'storedProcedure/getStoreList',
                 getEmpty:'storedProcedure/getEmpty',
                 getItemStatus:'storedProcedure/getItemStatus',
+                getTotal:'storedProcedure/getTotalNumber'
             }),
-            headers_set(){
-                let self = this;
-                let set=[]
-                if (this.list.length) {
-                    Object.keys(this.list[0]).forEach(item => {
-                        if (self.check(item)) {
-                            set.push({text: this.prepName(item), value: item, align: 'center',sortable:true})
-                        }
-                    })
-                    this.pagination = Object.assign({},this.pagination,{
-                        sortBy:set[0].value,
-                        rowsPerPage:10
-                    })
-                    set.push({text: '', value: this.headers[0], align: 'center',sortable: false})
-                }
-                return set
-            },
+
         },
         methods:{
             ...mapActions({
@@ -224,7 +220,6 @@
                 actionEmptyFields: "storedProcedure/getEmptyColumns"
             }),
             //МЕТОДЫ ДЛЯ РАБОТЫ С СЕРВЕРОМ (ЧИТАЙ ЗАПРОСЫ!)
-
             //асинк метод для получения данных с сервера
             //вызываемт vuex action
             async setDataFromServer() {
@@ -236,10 +231,11 @@
                         'RecordTimestamp',
                         'InsuranceArea_ID',
                         'InsuranceArea_Территория страхования'
-                    ]
+                    ],
+                    pagination:this.pagination
                 })
-
-                this.list = (this.getDickData(this.procedure)) || [];
+                //Собираем заголовки столбцов
+                this.headers=this.headers_set()
                 if( this.getItemStatus(this.procedure)){
                     //Выводим snackbar с текстом ошибки
                     this.snack_show({
@@ -404,6 +400,21 @@
                 }
                 result = (this.setType(props,index))? result : this.convertToData(item,true,props,index)
                 return result
+            },
+            //Составление массива с именами колонок в таблице
+            headers_set(){
+                let self = this;
+                let set=[]
+                console.log(this.getDickData(this.procedure))
+                if (this.getDickData(this.procedure).length) {
+                    Object.keys(this.getDickData(this.procedure)[0]).forEach(item => {
+                        if (self.check(item)) {
+                            set.push({text: item, value: item, align: 'center',sortable:true})
+                        }
+                    })
+                    set.push({text: '', value: '', align: 'center',sortable: false})
+                }
+                return set
             }
         }
     }
