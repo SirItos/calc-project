@@ -33,7 +33,6 @@
                     :items="list"
                     :pagination.sync="pagination"
                     class="elevation-1"
-                    :search="search"
                     select-all
                     item-key="id"
                 >

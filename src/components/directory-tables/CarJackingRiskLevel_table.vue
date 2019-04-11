@@ -20,7 +20,9 @@
                                 label="поиск"
                                 hide-details
                                 v-model="search"
+                                @click:clear="()=>{this.search=null;this.searchStart()}"
                                 clearable
+                                @change="searchStart()"
                         >
                         </v-text-field>
                     </v-card-title>
@@ -229,7 +231,8 @@
                 this.loading=true
                 await this.getList({
                     procedure:this.procedure,
-                    pagination:this.pagination
+                    pagination:this.pagination,
+                    search:this.search
 
                 })
                 //Собираем заголовки столбцов
@@ -303,6 +306,10 @@
             //Необхолдимо для того, чтобы данные в форме не были реактивными
             clone(fields){
                 return Object.assign({}, fields);
+            },
+            async searchStart(){
+                await this.setDataFromServer();
+
             },
             //Создание пустого набора данных на основание полей таблицы
             create_set(){

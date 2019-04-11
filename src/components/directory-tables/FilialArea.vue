@@ -20,7 +20,9 @@
                                 label="поиск"
                                 hide-details
                                 v-model="search"
+                                @click:clear="()=>{this.search=null;this.searchStart()}"
                                 clearable
+                                @change="searchStart()"
                         >
                         </v-text-field>
                     </v-card-title>
@@ -42,7 +44,7 @@
                                         :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
                                         @click="changeSort(header.value)"
                                 ><v-icon small>arrow_upward</v-icon>
-                                    {{header.text}}</th>
+                                    {{formatheader(header.text)}}</th>
                                 <th  style="width:100px!important"  >
                                     <v-btn fab small  flat ripple color="info"  class="data_table_btn"  @click="open_modal(true)">
                                         <v-icon  size="2em" v-if="!loading">mdi-plus</v-icon>
@@ -223,6 +225,7 @@
             //асинк метод для получения данных с сервера
             //вызываемт vuex action
             async setDataFromServer() {
+                this.loading=true
                 await this.getList({
                     procedure:this.procedure,
                     grouping:'Filial_ID',
@@ -232,7 +235,8 @@
                         'InsuranceArea_ID',
                         'InsuranceArea_Территория страхования'
                     ],
-                    pagination:this.pagination
+                    pagination:this.pagination,
+                    search:this.search
                 })
                 //Собираем заголовки столбцов
                 this.headers=this.headers_set()
@@ -341,7 +345,9 @@
                         'InsuranceArea_ID',
                         'InsuranceArea_Территория страхования',
                         'RecordTimestamp'
-                    ]
+                    ],
+                    pagination:this.pagination,
+                    search:this.search
                 })
                 this.list = this.getDickData(this.procedure);
                 this.$set(this.snackbar,'color',obj.color)
@@ -363,7 +369,11 @@
             check(item) {
                 return (item.indexOf('ID') < 0 && item.indexOf('Record') < 0 && item.indexOf('status') < 0 && item.indexOf('type')<0)
             },
+            async searchStart(){
+                if (this.search)
+                await this.setDataFromServer();
 
+            },
             changeSort(column) {
                 if (this.pagination.sortBy === column) {
                     this.pagination.descending = !this.pagination.descending
@@ -405,7 +415,6 @@
             headers_set(){
                 let self = this;
                 let set=[]
-                console.log(this.getDickData(this.procedure))
                 if (this.getDickData(this.procedure).length) {
                     Object.keys(this.getDickData(this.procedure)[0]).forEach(item => {
                         if (self.check(item)) {
@@ -415,6 +424,12 @@
                     set.push({text: '', value: '', align: 'center',sortable: false})
                 }
                 return set
+            },
+            formatheader(itm){
+                if (itm.indexOf('_')>0){
+                        return itm.split('_')[1]
+                }
+                return itm
             }
         }
     }

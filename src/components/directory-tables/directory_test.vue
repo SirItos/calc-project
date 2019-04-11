@@ -20,7 +20,9 @@
                                 label="поиск"
                                 hide-details
                                 v-model="search"
+                                @click:clear="()=>{this.search=null;this.searchStart()}"
                                 clearable
+                                @change="searchStart()"
                         >
                         </v-text-field>
                     </v-card-title>
@@ -228,7 +230,8 @@
                 this.loading=true
                 await this.getList({
                     procedure:this.procedure,
-                    pagination:this.pagination
+                    pagination:this.pagination,
+                    search:this.search
                 })
                 //Собираем заголовки столбцов
                 this.headers=this.headers_set()
@@ -345,7 +348,10 @@
             check(item) {
                 return (item.indexOf('ID') < 0 && item.indexOf('Record') < 0 && item.indexOf('status') < 0 && item.indexOf('type')<0)
             },
+           async searchStart(){
+                 await this.setDataFromServer();
 
+            },
             changeSort(column) {
                 if (this.pagination.sortBy === column) {
                     this.pagination.descending = !this.pagination.descending

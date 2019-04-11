@@ -35,7 +35,8 @@ const actions={
     async getList (context, payload){
         await HTTP.post('api/getListStoredPorcedur',{
             st_method:payload.procedure,
-            pagination:payload.pagination
+            pagination:payload.pagination,
+            search:payload.search
         }).then(response=>{
             response.data.result.forEach(item =>{
                 item.status=response.status
@@ -129,9 +130,10 @@ const actions={
             st_method:payload.procedure,
             grouping:payload.grouping,
             fields_to_merge:payload.fields_to_merge,
-            pagination:payload.pagination
+            pagination:payload.pagination,
+            search:payload.search
         }).then(response=>{
-            response.data.forEach(item =>{
+            response.data.result.forEach(item =>{
                 item.status=response.status
             })
             let commitData={
@@ -244,7 +246,7 @@ const mutations  = {
         state[commitData.name] = {
             result:commitData.data.result,
             total:commitData.data.totalNumber
-    }
+        }
 
     },
     setStatus(state,commitData){
