@@ -34,6 +34,7 @@
                     <TSUsagePeriod v-else-if="procedure_name==='TSUsagePeriod'" :procedure="procedure_name"></TSUsagePeriod>
                     <InsurancePayoutCount v-else-if="procedure_name==='InsurancePayoutCount'" :procedure="procedure_name"></InsurancePayoutCount>
                     <InsuranceProduct v-else-if="procedure_name==='InsuranceProduct_something'" :procedure="'InsuranceProduct'"></InsuranceProduct>
+                    <CarMark v-else-if="procedure_name==='CarMark'" :procedure="'CarMarka'"></CarMark>
                 </v-flex>
             </v-layout>
     </v-scroll-y-reverse-transition>
@@ -54,6 +55,7 @@
     import TSUsagePeriod from '../components/directory-tables/TSUsagePeriod'
     import InsurancePayoutCount from '../components/directory-tables/InsurancePayoutCount'
     import InsuranceProduct from '../components/directory-tables/InsuranceProduct'
+    import CarMark from '../components/directory-tables/CarMark'
     export default {
         components: {
             directory_test,
@@ -64,7 +66,8 @@
             FilialArea,
             TSUsagePeriod,
             InsurancePayoutCount,
-            InsuranceProduct
+            InsuranceProduct,
+            CarMark
         },
         name: "directory",
         data(){
@@ -108,6 +111,10 @@
                     {
                         name:'Страховой продукт',
                         proced:'InsuranceProduct_something'
+                    },
+                    {
+                        name:'Марка ТС',
+                        proced:'CarMark'
                     }
                 ]
             }
