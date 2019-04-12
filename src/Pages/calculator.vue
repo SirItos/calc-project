@@ -219,7 +219,6 @@
                 (val && this.ins)?this.check_new_calc(val):  this.confirmDeleeting()
             },
             async createCalculation(val,mode=false){
-
                 this.ins=val
                 this.$_.findWhere(this.fields,{ElementID:'insured'}).ElementValue=val
                 let temp_id=this.createTempId()

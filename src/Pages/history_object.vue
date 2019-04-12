@@ -1,13 +1,26 @@
 <template>
-    <v-container fill-height >
-        <v-layout row wrap>
+    <v-container fill-height class="justify-center" >
+        <div class="preloader">
+            <v-fade-transition>
+                <div class="data-table-preloader" v-if="loading">
+                    <v-progress-circular
+                            :size="100"
+                            color="info"
+                            indeterminate
+                    ></v-progress-circular>
+                </div>
+            </v-fade-transition>
+        </div>
+        <v-layout row wrap >
+            <div  class=" hid trans hidden" v-if="loading"></div>
             <v-flex>
                 <v-layout row wrap align-center style="border-bottom:1px solid rgba(0,0,0,.2)">
+
                     <v-flex md12>
                         <v-btn outline color="info"  class="mx-0 text-uppercase mb-4" @click="back_go()">  <v-icon left >mdi-arrow-left</v-icon> Назад</v-btn>
                     </v-flex>
-                    <v-flex md4 sm4 class="title">Расчет № {{current_object.id}}</v-flex>
-                    <v-flex md4 sm4 class="title">Стаутс: {{current_object.status_label}}</v-flex>
+                    <v-flex md4 sm4 class="title">Расчет № {{id_calc}}</v-flex>
+                    <v-flex md4 sm4 class="title">Стаутс: Значение</v-flex>
                     <v-spacer></v-spacer>
                         <v-btn fab small flat :to="'/calculator/'+current_object.id">
                             <v-icon>mdi-pencil</v-icon>
@@ -23,7 +36,7 @@
                                 label="Страхователь"
                                 type="text"
                                 readonly
-                                :value="current_object.insurant"
+                                :value="insur"
                                 :prepend-icon="'mdi-account'"
                         ></v-text-field>
                     </v-flex>
@@ -32,7 +45,7 @@
                                 label="TC"
                                 type="text"
                                 readonly
-                                :value="(current_object.object)||''"
+                                :value="TS"
                                 :prepend-icon="'mdi-car'"
                         ></v-text-field>
                     </v-flex>
@@ -97,13 +110,14 @@
 
 
 <script>
-    import {mapGetters} from "vuex"
+    import {mapGetters, mapActions} from "vuex"
     export default {
         name: "history_object",
         props:{
             id:{type:String,default:'0'}
             },
         data:()=>({
+            loading:false,
             current_object:{},
             headers: [
                 {
@@ -119,13 +133,54 @@
         }),
         computed:{
             ...mapGetters({
-                getCalculationById: "calculations/getCalculationById"
+                getCalculationById: "calculations/getCalculationById",
+                getCurrent: 'calculations_server/getCurrent'
             }),
-            mark_model(){
+            id_calc(){
+                return (this.getCurrent)?this.getCurrent[0].Calculation_ID: ''
+            },
+            insur(){
+               if (!this.getCurrent) return
+               return this.getCurrent.find(itm => {
+                   return itm.ElementID === 'insured'
+               }).ElementValue
+            },
+            TS(){
+                if (!this.getCurrent) return
+                let mark = this.getCurrent.find(itm => {
+                    return itm.ElementID === 'marka'
+                }).ElementValue
+                let model = this.getCurrent.find(itm => {
+                    return itm.ElementID === 'model'
+                }).ElementValue
+                return (mark && model) ?(mark)||'' + ' ' + (model)||'': null
+            },
+            dirvers() {
 
             },
+            Organization() {
+                if (!this.getCurrent) return
+                return this.getCurrent.find(itm => {
+                    return itm.ElementID === 'insured'
+                }).ElementValue
+            },
+            Responsible () {
+
+            }
         },
         methods:{
+            ...mapActions({
+                CurrentItemFromServer: 'calculations_server/getCurrentItem'
+            }),
+            async setDataFromServer(){
+                if (this.id < 0) {
+                    this.current_object=this.getCalculationById(Number(this.id))
+                }else {
+                   this.loading=true
+                   await this.CurrentItemFromServer(this.id)
+                   this.loading=false
+                }
+            },
             driver_number(item){
                 return "Водитель "+(this.current_object.drivers.indexOf(item)+1)
             },
@@ -137,11 +192,36 @@
         },
         created(){
             let self=this;
-            this.current_object=this.getCalculationById(Number(this.id))
+            this.setDataFromServer()
+
         }
     }
 </script>
 
 <style scoped>
-
+.preloader{
+    position: absolute;
+    flex:1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index:1000;
+}
+    .hidden{
+        background: rgba(255,255,255,0.6);
+    }
+.hid{
+    position: absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+}
+    .trans{
+        -webkit-transition: 0.3s;
+        -moz-transition: 0.3s;
+        -ms-transition: 0.3s;
+        -o-transition: 0.3s;
+        transition: 0.3s;
+    }
 </style>
